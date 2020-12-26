@@ -61,6 +61,7 @@ def parse_csv(file_path):
 
 class MoveGroupPythonInteface(object):
     """MoveGroupPythonIntefaceTutorial"""
+
     def __init__(self):
         super(MoveGroupPythonInteface, self).__init__()
 
@@ -110,8 +111,7 @@ class MoveGroupPythonInteface(object):
 
         # We can get a list of all the groups in the robot:
         group_names = robot.get_group_names()
-        print "============ Available Planning Groups:", robot.get_group_names(
-        )
+        print "============ Available Planning Groups:", robot.get_group_names()
 
         # Sometimes for debugging it is useful to print the entire state of the
         # robot:
@@ -162,8 +162,7 @@ def main(file_path):
 
         for pose_goal in pose_goals:
             print(pose_goal)
-            robot_interface.go_to_pose(pose_goal[0], pose_goal[1],
-                                       pose_goal[2])
+            robot_interface.go_to_pose(pose_goal[0], pose_goal[1], pose_goal[2])
 
     except rospy.ROSInterruptException:
         return
