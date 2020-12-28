@@ -1,5 +1,16 @@
 {
   "python.autoComplete.extraPaths": [
     "/opt/ros/melodic/lib/python2.7/dist-packages"
+  ],
+  "python.analysis.extraPaths": [
+    "/opt/ros/melodic/lib/python2.7/dist-packages"
+  ],
+  "python.pythonPath": "/usr/bin/python",
+  "cSpell.words": [
+    "Rviz",
+    "roscpp"
+  ],
+  "python.linting.pylintArgs": [
+    "--rcfile=${env:HOME}/Documents/.pylintrc"
   ]
 }
