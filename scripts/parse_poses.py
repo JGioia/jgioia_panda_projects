@@ -171,5 +171,7 @@ def main(file_path):
 
 
 if __name__ == '__main__':
-    ex1_file_path = "/home/joseph/ws_moveit/src/jgioia_panda_projects/csv/ex1.csv"
-    main(sys.argv[1])
+    file_path = "/home/joseph/ws_moveit/src/jgioia_panda_projects/csv/ex1.csv"
+    if len(sys.argv) > 1:
+        file_path = sys.argv[1]
+    main(file_path)

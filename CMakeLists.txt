@@ -8,12 +8,6 @@ project(jgioia_panda_projects)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  moveit_commander
-  moveit_core
-  panda_moveit_config
-  rospy
-  std_msgs
-  tf2_geometry_msgs
 )
 
 ## System dependencies are found with CMake's conventions
