@@ -158,7 +158,8 @@ include_directories(
 ## in contrast to setup.py, you can choose the destination
 catkin_install_python(PROGRAMS
   scripts/parse_poses.py
-  scripts/move_group_python_interface
+  scripts/move_group_python_interface_tutorial.py
+  scripts/move_group_interface.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

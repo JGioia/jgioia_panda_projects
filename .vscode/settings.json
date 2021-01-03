@@ -3,7 +3,8 @@
     "/opt/ros/melodic/lib/python2.7/dist-packages"
   ],
   "python.analysis.extraPaths": [
-    "/opt/ros/melodic/lib/python2.7/dist-packages"
+    "/opt/ros/melodic/lib/python2.7/dist-packages",
+    "scripts"
   ],
   "python.pythonPath": "/usr/bin/python",
   "cSpell.words": [
