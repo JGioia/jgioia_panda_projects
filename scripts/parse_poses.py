@@ -44,6 +44,8 @@ def main(file_path):
     # Parses the poses from the input file path
     pose_goals = parse_csv(file_path)
 
+    # test(robot_interface)
+
     # Goes to every pose in the list of poses
     for pose_goal in pose_goals:
       print(pose_goal)
@@ -55,6 +57,9 @@ def main(file_path):
   except KeyboardInterrupt:
     return
 
+
+def test(robot_interface):
+  robot_interface.print_state()
 
 if __name__ == '__main__':
   

@@ -108,7 +108,9 @@ class MoveGroupInterface():
     
     # Set the pose goal
     pose_goal = geometry_msgs.msg.Pose()
-    pose_goal.orientation.w = 1.0
+    pose_goal.orientation.x = 1
+    pose_goal.orientation.y = 1
+    pose_goal.orientation.z = 1
     pose_goal.position.x = x
     pose_goal.position.y = y
     pose_goal.position.z = z
@@ -187,9 +189,11 @@ class MoveGroupInterface():
     
     # Creates the pose for the box to be placed at
     box_pose = geometry_msgs.msg.PoseStamped()
-    box_pose.header.frame_id = "panda_leftfinger"
-    box_pose.pose.orientation.w = 1.0
-    box_pose.pose.position.z = 0.07 # slightly above the end effector
+    box_pose.header.frame_id = "panda_link0"
+    box_pose.pose.orientation.w = 0
+    box_pose.pose.position.x = 0.5
+    box_pose.pose.position.y = 0
+    box_pose.pose.position.z = 0
     
     # Adds the box
     self.box_name = "box"
@@ -258,3 +262,23 @@ class MoveGroupInterface():
 
     # We wait for the planning scene to update.
     return self.wait_for_state_update(box_is_attached=False, box_is_known=False, timeout=timeout)
+  
+  
+  def print_state(self):
+    # print("Pose: " + str(self.move_group.get_current_pose()))
+    # print("Joint State: " + str(self.move_group.get_current_joint_values()))
+    # print(str(self.move_group.get_joints()))
+    # print(str(self.move_group.get_end_effector_link()))
+    
+    # joint_values = self.move_group.get_current_joint_values()
+    # for i in range(4, len(joint_values)):
+    #   joint_values[i] = 0.5
+    #   print("Joint Values " + str(i) + " : " + str(joint_values))
+    #   self.move_group.set_joint_value_target(joint_values)
+    #   self.move_group.go()
+    
+    self.go_to_pose(0.4, 0.5, 0.4)
+    self.remove_box()
+    self.add_box()
+    self.move_group.pick(self.box_name)
+  
