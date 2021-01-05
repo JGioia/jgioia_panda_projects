@@ -108,9 +108,10 @@ class MoveGroupInterface():
     
     # Set the pose goal
     pose_goal = geometry_msgs.msg.Pose()
-    pose_goal.orientation.x = 1
-    pose_goal.orientation.y = 1
-    pose_goal.orientation.z = 1
+    pose_goal.orientation.x = 0.1
+    pose_goal.orientation.y = 0
+    pose_goal.orientation.z = 0
+    pose_goal.orientation.w = 1
     pose_goal.position.x = x
     pose_goal.position.y = y
     pose_goal.position.z = z

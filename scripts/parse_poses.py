@@ -69,7 +69,7 @@ def test(robot_interface):
 if __name__ == '__main__':
   
   # Default file we are parsing poses from
-  file_path = "/home/joseph/ws_moveit/src/jgioia_panda_projects/csv/ex1.csv"
+  file_path = "/home/joseph/ws_moveit/src/jgioia_panda_projects/csv/ex2.csv"
   
   # Overrides default if file is specified in arguments
   if len(sys.argv) > 1:
