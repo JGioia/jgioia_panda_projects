@@ -44,12 +44,12 @@ def main(file_path):
     # Parses the poses from the input file path
     pose_goals = parse_csv(file_path)
 
-    # test(robot_interface)
+    test(robot_interface)
 
-    # Goes to every pose in the list of poses
-    for pose_goal in pose_goals:
-      print(pose_goal)
-      robot_interface.go_to_pose(pose_goal[0], pose_goal[1], pose_goal[2])
+    # # Goes to every pose in the list of poses
+    # for pose_goal in pose_goals:
+    #   print(pose_goal)
+    #   robot_interface.go_to_pose(pose_goal[0], pose_goal[1], pose_goal[2])
 
   # Ends the program if we get one of these errors
   except rospy.ROSInterruptException:
@@ -59,7 +59,7 @@ def main(file_path):
 
 
 def test(robot_interface):
-  robot_interface.print_state()
+  robot_interface.test()
 
 if __name__ == '__main__':
   

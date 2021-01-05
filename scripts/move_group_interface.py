@@ -264,7 +264,7 @@ class MoveGroupInterface():
     return self.wait_for_state_update(box_is_attached=False, box_is_known=False, timeout=timeout)
   
   
-  def print_state(self):
+  def test(self):
     # print("Pose: " + str(self.move_group.get_current_pose()))
     # print("Joint State: " + str(self.move_group.get_current_joint_values()))
     # print(str(self.move_group.get_joints()))
