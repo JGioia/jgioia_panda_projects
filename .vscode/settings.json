@@ -14,5 +14,9 @@
   ],
   "python.linting.pylintArgs": [
     "--rcfile=${env:HOME}/Documents/.pylintrc"
-  ]
+  ],
+  "python.linting.pylintUseMinimalCheckers": false,
+  "python.linting.enabled": true,
+  "editor.formatOnSave": true,
+  "python.formatting.provider": "yapf"
 }

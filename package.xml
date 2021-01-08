@@ -14,8 +14,6 @@
   <depend>std_msgs</depend>
   <depend>tf2_geometry_msgs</depend>
 
-  <!-- I do not know why, but I am able to remove all of these dependencies and the script will still run-->
-  <!-- My script does depend on them so I will keep them here-->
   <exec_depend>moveit_commander</exec_depend>
   <exec_depend>moveit_core</exec_depend>
   <exec_depend>panda_moveit_config</exec_depend>
