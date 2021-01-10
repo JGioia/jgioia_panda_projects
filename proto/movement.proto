@@ -1,0 +1,41 @@
+syntax = "proto2";
+
+package Movement;
+
+message Wait {
+  optional double seconds = 1 [default = 0.0];
+}
+
+message PoseGoal {
+  optional double x = 1 [default = -999];
+  optional double y = 2 [default = -999];
+  optional double z = 3 [default = -999];
+}
+
+message JointGoal {
+  optional double joint1 = 1 [default = -999];
+  optional double joint2 = 2 [default = -999];
+  optional double joint3 = 3 [default = -999];
+  optional double joint4 = 4 [default = -999];
+  optional double joint5 = 5 [default = -999];
+  optional double joint6 = 6 [default = -999];
+  optional double joint7 = 7 [default = -999];
+  optional double joint8 = 8 [default = -999];
+}
+
+enum MovementType {
+  WAIT = 0;
+  POSEGOAL = 1;
+  JOINTGOAL = 2;
+}
+
+message MovementOperation {
+  optional Wait wait = 1;
+  optional PoseGoal poseGoal = 2;
+  optional JointGoal jointGoal = 3;
+  required MovementType type = 4;
+}
+
+message MovementCollection {
+  repeated MovementOperation operations = 1;
+}

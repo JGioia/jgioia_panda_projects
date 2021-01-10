@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-""" Module that contains the MoveGroupInterface """
+"""Module that contains the MoveGroupInterface"""
 
 import sys
 import rospy
@@ -12,8 +12,7 @@ from moveit_commander.conversions import pose_to_list
 
 
 def all_close(goal, actual, tolerance):
-  """
-  Convenience method for testing if a list of values are within a tolerance of their counterparts in another list
+  """Convenience method for testing if a list of values are within a tolerance of their counterparts in another list
   
   Args:
     goal (list[float] or Pose or PoseStamped): The goal pose
@@ -39,9 +38,7 @@ def all_close(goal, actual, tolerance):
 
 
 class MoveGroupInterface():
-  """
-  Provides useful methods for robot interaction that utilize the MoveGroupCommander class
-  """
+  """Provides useful methods for robot interaction that utilize the MoveGroupCommander class"""
 
   def __init__(self):
     """
@@ -103,13 +100,15 @@ class MoveGroupInterface():
     self.group_names = group_names
 
   def go_to_pose(self, x, y, z):
-    """
-    Makes end effector go to the pose position specified by the parameters
+    """Makes end effector go to the pose position specified by the parameters
     
     Args:
       x (float): The goal x position
       y (float): The goal y position
       z (float): The goal z position
+      
+    Returns:
+      A bool that represents whether the expected state was reached before the timeout.
     """
 
     # Set the pose goal
@@ -136,16 +135,34 @@ class MoveGroupInterface():
     # We use the class variable rather than the copied state variable
     current_pose = self.move_group.get_current_pose().pose
 
-    # Return if the position we went to is within tolerances of the position we wanted
+    # Returns if the position we went to is within tolerances of the position we wanted
     return all_close(pose_goal, self.move_group.get_current_pose().pose, 0.01)
+
+  def go_to_joint_goal(self, joint_goal):
+    """Moves the joints to the positions specified
+
+    Args:
+        joint_goal (list[float]): List of joint positions to go to
+
+    Returns:
+        A bool that represents whether the expected state was reached before the timeout.
+    """
+
+    # Moves to joint_goal
+    self.move_group.go(joint_goal, wait=True)
+
+    # Ensures that there is no residual movement
+    self.move_group.stop()
+
+    # Returns whether the position we went to is within tolerances of the position we wanted
+    return all_close(joint_goal, self.move_group.get_current_joint_values(),
+                     0.01)
 
   def wait_for_state_update(self,
                             box_is_known=False,
                             box_is_attached=False,
                             timeout=4):
-    """
-    Waits until we reach the expected state. Needed because the node may die before
-    publishing a collision object update message.
+    """Waits until we reach the expected state.
 
     Args:
       box_is_known (bool): Optional; Expected value for whether the box is in the scene. 
@@ -183,8 +200,7 @@ class MoveGroupInterface():
     return False
 
   def add_box(self, timeout=4):
-    """
-    Adds a box at the location of the panda's left box stores it in an object variable.
+    """Adds a box at the location of the panda's left box stores it in an object variable.
 
     Args:
       timeout (int): Optional; Number of seconds to wait as a maximum for the box to
@@ -210,8 +226,7 @@ class MoveGroupInterface():
     return self.wait_for_state_update(box_is_known=True, timeout=timeout)
 
   def attach_box(self, timeout=4):
-    """
-    Attaches the box to the Panda wrist.
+    """Attaches the box to the Panda wrist.
 
     Args:
       timeout (int): Optional; Number of seconds to wait as a maximum for the box to
@@ -232,8 +247,7 @@ class MoveGroupInterface():
                                       timeout=timeout)
 
   def detach_box(self, timeout=4):
-    """
-    Detaches the box from the Panda wrist.
+    """Detaches the box from the Panda wrist.
 
     Args:
       timeout (int): Optional; Number of seconds to wait as a maximum for the box to
@@ -252,8 +266,7 @@ class MoveGroupInterface():
                                       timeout=timeout)
 
   def remove_box(self, timeout=4):
-    """
-    Remove the box from the planning scene. The box must be detached to do this.
+    """Remove the box from the planning scene. The box must be detached to do this.
 
     Args:
       timeout (int): Optional; Number of seconds to wait as a maximum for the box to
@@ -272,12 +285,10 @@ class MoveGroupInterface():
                                       timeout=timeout)
 
   def test(self):
-    """
-    A method to be used for feature testing. Currently testing pick and place.
-    """
+    """A method to be used for feature testing. Currently testing pick and place."""
     # print("Pose: " + str(self.move_group.get_current_pose()))
     # print("Joint State: " + str(self.move_group.get_current_joint_values()))
-    # print(str(self.move_group.get_joints()))
+    print(str(self.move_group.get_joints()))
     # print(str(self.move_group.get_end_effector_link()))
 
     # joint_values = self.move_group.get_current_joint_values()
@@ -287,7 +298,7 @@ class MoveGroupInterface():
     #   self.move_group.set_joint_value_target(joint_values)
     #   self.move_group.go()
 
-    self.go_to_pose(0.4, 0.5, 0.4)
-    self.remove_box()
-    self.add_box()
-    self.move_group.pick(self.box_name)
+    # self.go_to_pose(0.4, 0.5, 0.4)
+    # self.remove_box()
+    # self.add_box()
+    # self.move_group.pick(self.box_name)

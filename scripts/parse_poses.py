@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-""" Executable module that parses poses and moves the Panda """
+"""Executable module that parses poses and moves the Panda"""
 
 import move_group_interface
 import sys
@@ -8,8 +8,7 @@ import time
 
 
 def parse_csv(file_path):
-  """
-  Parses a file containing comma seperated triples of floats representing pose goals
+  """Parses a file containing comma seperated triples of floats representing pose goals
   
   Args:
     file_path (string): the file path to the file containing poses
@@ -36,8 +35,7 @@ def parse_csv(file_path):
 
 
 def main(file_path):
-  """
-  Moves the end effector of the panda to the poses specified in the file given
+  """Moves the end effector of the panda to the poses specified in the file given
 
   Args:
     file_path (string): the file path to the file containing poses
