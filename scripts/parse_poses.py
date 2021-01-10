@@ -5,6 +5,7 @@ import move_group_interface
 import sys
 import rospy
 import time
+import movement_pb2
 
 
 def parse_csv(file_path):
@@ -32,6 +33,14 @@ def parse_csv(file_path):
     result.append(result_line)
 
   return result
+
+
+def parse_protobuf(file_path):
+  moveCol = movement_pb2.MovementCollection()
+  file = open(file_path, "r")
+  moveCol.ParseFromString(file.read())
+  file.close()
+  return moveCol
 
 
 def main(file_path):
@@ -65,7 +74,7 @@ def main(file_path):
 
 if __name__ == '__main__':
   # Default file we are parsing poses from
-  file_path = "/home/joseph/ws_moveit/src/jgioia_panda_projects/csv/ex1.csv"
+  file_path = "/home/joseph/ws_moveit/src/jgioia_panda_projects/proto/message1.txt"
 
   # Overrides default if file is specified in arguments
   if len(sys.argv) > 1:

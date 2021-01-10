@@ -11,6 +11,7 @@
   "cSpell.words": [
     "Franka",
     "Rviz",
+    "protobuf",
     "roscpp"
   ],
   "python.linting.pylintArgs": [

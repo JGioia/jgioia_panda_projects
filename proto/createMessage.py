@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import movement_pb2
+import sys
 
 
 def main():
@@ -8,9 +9,7 @@ def main():
   moveOp.type = movement_pb2.MovementType.WAIT
   moveOp.wait.seconds = 2.0
 
-  print(moveOp.wait.SerializeToString())
-
-  f = open("message1.proto", "wb")
+  f = open("message1.txt", "wb")
   f.write(moveCol.SerializeToString())
   f.close()
 
