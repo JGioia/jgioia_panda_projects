@@ -2,12 +2,11 @@
 """Module that contains the MoveGroupInterface"""
 
 import sys
+import copy
 import rospy
 import moveit_commander
 import moveit_msgs.msg
 import geometry_msgs.msg
-from math import pi
-from std_msgs.msg import String
 from moveit_commander.conversions import pose_to_list
 
 
@@ -71,32 +70,32 @@ class MoveGroupInterface():
 
     # We can get the name of the reference frame for this robot:
     self.planning_frame = self.move_group_arm.get_planning_frame()
-    print("Planning frame: " + self.planning_frame)
+    # print("Planning frame: " + self.planning_frame)
 
     # We can also print the name of the end-effector link for this group:
     self.eef_link = self.move_group_arm.get_end_effector_link()
-    print("End effector link: " + self.eef_link)
+    # print("End effector link: " + self.eef_link)
 
     # We can get a list of all the groups in the robot:
     self.group_names = self.robot.get_group_names()
-    print("Available Planning Groups:", self.robot.get_group_names())
+    # print("Available Planning Groups:", self.robot.get_group_names())
 
     # Sometimes for debugging it is useful to print the entire state of the
     # robot:
-    print("Printing robot state")
-    print(self.robot.get_current_state())
-    print("")
+    # print("Printing robot state")
+    # print(self.robot.get_current_state())
+    # print("")
 
     # Misc variables
     self.box_name = ''
 
-  def go_to_pose(self, x, y, z):
+  def go_to_pose(self, x=None, y=None, z=None):
     """Makes end effector go to the pose position specified by the parameters
     
     Args:
-      x (float): The goal x position
-      y (float): The goal y position
-      z (float): The goal z position
+      x (float or None): The goal x position. If None, then goal position is current position.
+      y (float or None): The goal y position. If None, then goal position is current position.
+      z (float or None): The goal z position. If None, then goal position is current position.
       
     Returns:
       A bool that represents whether the expected state was reached before the timeout.
@@ -108,13 +107,25 @@ class MoveGroupInterface():
     pose_goal.orientation.y = 0
     pose_goal.orientation.z = 0
     pose_goal.orientation.w = 1
-    pose_goal.position.x = x
-    pose_goal.position.y = y
-    pose_goal.position.z = z
-    self.move_group_arm.set_pose_target(pose_goal)
+
+    # Deals with the case where a parameter is not set
+    current_pose = self.move_group_arm.get_current_pose().pose
+    if x == None:
+      pose_goal.position.x = current_pose.position.x
+    else:
+      pose_goal.position.x = x
+    if y == None:
+      pose_goal.position.y = current_pose.position.y
+    else:
+      pose_goal.position.y = y
+    if z == None:
+      pose_goal.position.z = current_pose.position.z
+    else:
+      pose_goal.position.z = z
 
     # Now, we call the planner to compute the plan and execute it.
-    plan = self.move_group_arm.go(wait=True)
+    self.move_group_arm.set_pose_target(pose_goal)
+    self.move_group_arm.go(wait=True)
 
     # Calling `stop()` ensures that there is no residual movement
     self.move_group_arm.stop()
@@ -134,11 +145,19 @@ class MoveGroupInterface():
     """Moves the joints to the positions specified
 
     Args:
-        joint_goal (list[float]): List of joint positions to go to
+      joint_goal (list[float or None]): List of joint positions to go to. If a joint position is
+        None then the goal for that joint is the current position.
 
     Returns:
-        A bool that represents whether the expected state was reached before the timeout.
+      A bool that represents whether the expected state was reached before the timeout.
     """
+
+    # Deals with the case where a joint's goal is None
+    current_joints = self.move_group_arm.get_current_joint_values()
+    joint_goal = copy.deepcopy(joint_goal)
+    for i in range(len(joint_goal)):
+      if joint_goal[i] == None:
+        joint_goal[i] = current_joints[i]
 
     # Moves to joint_goal
     self.move_group_arm.go(joint_goal, wait=True)

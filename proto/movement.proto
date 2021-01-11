@@ -7,33 +7,34 @@ message Wait {
 }
 
 message PoseGoal {
-  optional double x = 1 [default = -999];
-  optional double y = 2 [default = -999];
-  optional double z = 3 [default = -999];
+  optional double x = 1;
+  optional double y = 2;
+  optional double z = 3;
 }
 
 message JointGoal {
-  optional double joint1 = 1 [default = -999];
-  optional double joint2 = 2 [default = -999];
-  optional double joint3 = 3 [default = -999];
-  optional double joint4 = 4 [default = -999];
-  optional double joint5 = 5 [default = -999];
-  optional double joint6 = 6 [default = -999];
-  optional double joint7 = 7 [default = -999];
-  optional double joint8 = 8 [default = -999];
+  optional double joint1 = 1;
+  optional double joint2 = 2;
+  optional double joint3 = 3;
+  optional double joint4 = 4;
+  optional double joint5 = 5;
+  optional double joint6 = 6;
+  optional double joint7 = 7;
 }
 
-enum MovementType {
-  WAIT = 0;
-  POSEGOAL = 1;
-  JOINTGOAL = 2;
+message GripGoal {
+  enum GripType {
+    OPEN = 0;
+    CLOSE = 1;
+  }
+  optional GripType type = 1;
 }
 
 message MovementOperation {
   optional Wait wait = 1;
   optional PoseGoal poseGoal = 2;
   optional JointGoal jointGoal = 3;
-  required MovementType type = 4;
+  optional GripGoal grip = 4;
 }
 
 message MovementCollection {
