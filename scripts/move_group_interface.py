@@ -295,21 +295,20 @@ class MoveGroupInterface():
                                       box_is_known=False,
                                       timeout=timeout)
 
+  def open_gripper(self):
+    pass
+
+  def close_gripper(self):
+    pass
+
   def test(self):
     """A method to be used for feature testing. Currently testing pick and place."""
     # print("Pose: " + str(self.move_group.get_current_pose()))
-    # print("Joint State: " + str(self.move_group.get_current_joint_values()))
-    print(str(self.move_group_arm.get_joints()))
-    # print(str(self.move_group.get_end_effector_link()))
-
-    # joint_values = self.move_group.get_current_joint_values()
-    # for i in range(8, len(joint_values)):
-    #   joint_values[i] = 0.05
-    #   print("Joint Values " + str(i) + " : " + str(joint_values))
-    #   self.move_group.set_joint_value_target(joint_values)
-    #   self.move_group.go()
-
-    self.go_to_pose(0.4, 0.5, 0.4)
-    self.remove_box()
-    self.add_box()
-    self.move_group_arm.pick(self.box_name)
+    print("Joint State: " +
+          str(self.move_group_hand.get_current_joint_values()))
+    print(str(self.move_group_hand.get_joints()))
+    self.move_group_hand.go([0, 0], wait=True)
+    # self.go_to_pose(0.4, 0.5, 0.4)
+    # self.remove_box()
+    # self.add_box()
+    # self.move_group_arm.pick(self.box_name)

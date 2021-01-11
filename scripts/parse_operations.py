@@ -39,10 +39,10 @@ def run_move_op(moveOp, robotInterface):
     robotInterface.go_to_pose(xGoal, yGoal, zGoal)
 
   elif moveOp.HasField("jointGoal"):
-    # I'm not a big fan of doing it this way, but I want to maintain the ability
-    # to just specify some of the joints
     jointGoal = [None for i in range(7)]
 
+    # I'm not a big fan of doing it this way, but I want to maintain the ability
+    # to just specify some of the joints
     if moveOp.jointGoal.HasField("joint1"):
       jointGoal[0] = moveOp.jointGoal.joint1
     if moveOp.jointGoal.HasField("joint2"):
