@@ -55,15 +55,13 @@ def main(file_path):
     robot_interface = move_group_interface.MoveGroupInterface()
 
     # Parses the poses from the input file path
-    pose_goals = parse_csv(file_path)
+    moveCol = parse_protobuf(file_path)
 
     # Goes to every pose in the list of poses
-    for pose_goal in pose_goals:
-      print("Moving to x = " + str(pose_goal[0]) + ", y = " +
-            str(pose_goal[1]) + ", z = " + str(pose_goal[2]) + "...")
-      robot_interface.go_to_pose(pose_goal[0], pose_goal[1], pose_goal[2])
-      print("Waiting " + str(pose_goal[3]) + " seconds...")
-      time.sleep(pose_goal[3])
+    for moveOp in moveCol.operations:
+      if moveOp.type == movement_pb2.MovementType.WAIT:
+        print("Waiting " + str(moveOp.wait.seconds) + " seconds...")
+        time.sleep(moveOp.wait.seconds)
 
   # Ends the program if we get one of these errors
   except rospy.ROSInterruptException:

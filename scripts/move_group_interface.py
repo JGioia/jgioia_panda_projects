@@ -41,9 +41,7 @@ class MoveGroupInterface():
   """Provides useful methods for robot interaction that utilize the MoveGroupCommander class"""
 
   def __init__(self):
-    """
-    Initializes the interface to control a Franka Emika Panda robot
-    """
+    """Initializes the interface to control a Franka Emika Panda robot"""
 
     # First initialize `moveit_commander`_ and a `rospy`_ node:
     moveit_commander.roscpp_initialize(sys.argv)
@@ -51,53 +49,46 @@ class MoveGroupInterface():
 
     # Instantiate a `RobotCommander`_ object. Provides information such as the robot's
     # kinematic model and the robot's current joint states
-    robot = moveit_commander.RobotCommander()
+    self.robot = moveit_commander.RobotCommander()
 
     # Instantiate a `PlanningSceneInterface`_ object.  This provides a remote interface
     # for getting, setting, and updating the robot's internal understanding of the
     # surrounding world:
-    scene = moveit_commander.PlanningSceneInterface()
+    self.scene = moveit_commander.PlanningSceneInterface()
 
     # Instantiate a `MoveGroupCommander`_ object.  This object is an interface
     # to a planning group (group of joints).
     # This interface can be used to plan and execute motions:
-    group_name = "panda_arm"
-    move_group = moveit_commander.MoveGroupCommander(group_name)
+    self.move_group_arm = moveit_commander.MoveGroupCommander("panda_arm")
+    self.move_group_hand = moveit_commander.MoveGroupCommander("hand")
 
     # Create a `DisplayTrajectory`_ ROS publisher which is used to display
     # trajectories in Rviz:
-    display_trajectory_publisher = rospy.Publisher(
+    self.display_trajectory_publisher = rospy.Publisher(
         '/move_group/display_planned_path',
         moveit_msgs.msg.DisplayTrajectory,
         queue_size=20)
 
     # We can get the name of the reference frame for this robot:
-    planning_frame = move_group.get_planning_frame()
-    print("Planning frame: " + planning_frame)
+    self.planning_frame = self.move_group_arm.get_planning_frame()
+    print("Planning frame: " + self.planning_frame)
 
     # We can also print the name of the end-effector link for this group:
-    eef_link = move_group.get_end_effector_link()
-    print("End effector link: " + eef_link)
+    self.eef_link = self.move_group_arm.get_end_effector_link()
+    print("End effector link: " + self.eef_link)
 
     # We can get a list of all the groups in the robot:
-    group_names = robot.get_group_names()
-    print("Available Planning Groups:", robot.get_group_names())
+    self.group_names = self.robot.get_group_names()
+    print("Available Planning Groups:", self.robot.get_group_names())
 
     # Sometimes for debugging it is useful to print the entire state of the
     # robot:
     print("Printing robot state")
-    print(robot.get_current_state())
+    print(self.robot.get_current_state())
     print("")
 
     # Misc variables
     self.box_name = ''
-    self.robot = robot
-    self.scene = scene
-    self.move_group = move_group
-    self.display_trajectory_publisher = display_trajectory_publisher
-    self.planning_frame = planning_frame
-    self.eef_link = eef_link
-    self.group_names = group_names
 
   def go_to_pose(self, x, y, z):
     """Makes end effector go to the pose position specified by the parameters
@@ -120,23 +111,24 @@ class MoveGroupInterface():
     pose_goal.position.x = x
     pose_goal.position.y = y
     pose_goal.position.z = z
-    self.move_group.set_pose_target(pose_goal)
+    self.move_group_arm.set_pose_target(pose_goal)
 
     # Now, we call the planner to compute the plan and execute it.
-    plan = self.move_group.go(wait=True)
+    plan = self.move_group_arm.go(wait=True)
 
     # Calling `stop()` ensures that there is no residual movement
-    self.move_group.stop()
+    self.move_group_arm.stop()
 
     # It is always good to clear your targets after planning with poses.
     # Note: there is no equivalent function for clear_joint_value_targets()
-    self.move_group.clear_pose_targets()
+    self.move_group_arm.clear_pose_targets()
 
     # We use the class variable rather than the copied state variable
-    current_pose = self.move_group.get_current_pose().pose
+    current_pose = self.move_group_arm.get_current_pose().pose
 
     # Returns if the position we went to is within tolerances of the position we wanted
-    return all_close(pose_goal, self.move_group.get_current_pose().pose, 0.01)
+    return all_close(pose_goal,
+                     self.move_group_arm.get_current_pose().pose, 0.01)
 
   def go_to_joint_goal(self, joint_goal):
     """Moves the joints to the positions specified
@@ -149,13 +141,13 @@ class MoveGroupInterface():
     """
 
     # Moves to joint_goal
-    self.move_group.go(joint_goal, wait=True)
+    self.move_group_arm.go(joint_goal, wait=True)
 
     # Ensures that there is no residual movement
-    self.move_group.stop()
+    self.move_group_arm.stop()
 
     # Returns whether the position we went to is within tolerances of the position we wanted
-    return all_close(joint_goal, self.move_group.get_current_joint_values(),
+    return all_close(joint_goal, self.move_group_arm.get_current_joint_values(),
                      0.01)
 
   def wait_for_state_update(self,
@@ -288,17 +280,17 @@ class MoveGroupInterface():
     """A method to be used for feature testing. Currently testing pick and place."""
     # print("Pose: " + str(self.move_group.get_current_pose()))
     # print("Joint State: " + str(self.move_group.get_current_joint_values()))
-    print(str(self.move_group.get_joints()))
+    print(str(self.move_group_arm.get_joints()))
     # print(str(self.move_group.get_end_effector_link()))
 
     # joint_values = self.move_group.get_current_joint_values()
-    # for i in range(4, len(joint_values)):
-    #   joint_values[i] = 0.5
+    # for i in range(8, len(joint_values)):
+    #   joint_values[i] = 0.05
     #   print("Joint Values " + str(i) + " : " + str(joint_values))
     #   self.move_group.set_joint_value_target(joint_values)
     #   self.move_group.go()
 
-    # self.go_to_pose(0.4, 0.5, 0.4)
-    # self.remove_box()
-    # self.add_box()
-    # self.move_group.pick(self.box_name)
+    self.go_to_pose(0.4, 0.5, 0.4)
+    self.remove_box()
+    self.add_box()
+    self.move_group_arm.pick(self.box_name)
