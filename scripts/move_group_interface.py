@@ -169,6 +169,33 @@ class MoveGroupInterface():
     return all_close(joint_goal, self.move_group_arm.get_current_joint_values(),
                      0.01)
 
+  def go_to_hand_joint_goal(self, joint_goal):
+    """Moves the joints in the hand move group to the positions specified
+
+    Args:
+      joint_goal (list[float or None]): List of joint positions to go to. If a joint position is
+        None then the goal for that joint is the current position.
+
+    Returns:
+      A bool that represents whether the expected state was reached before the timeout.
+    """
+    # Deals with the case where a joint's goal is None
+    current_joints = self.move_group_hand.get_current_joint_values()
+    joint_goal = copy.deepcopy(joint_goal)
+    for i in range(len(joint_goal)):
+      if joint_goal[i] == None:
+        joint_goal[i] = current_joints[i]
+
+    # Moves to joint_goal
+    self.move_group_hand.go(joint_goal, wait=True)
+
+    # Ensures that there is no residual movement
+    self.move_group_hand.stop()
+
+    # Returns whether the position we went to is within tolerances of the position we wanted
+    return all_close(joint_goal,
+                     self.move_group_hand.get_current_joint_values(), 0.01)
+
   def wait_for_state_update(self,
                             box_is_known=False,
                             box_is_attached=False,
@@ -223,11 +250,11 @@ class MoveGroupInterface():
 
     # Creates the pose for the box to be placed at
     box_pose = geometry_msgs.msg.PoseStamped()
-    box_pose.header.frame_id = "panda_link0"
+    box_pose.header.frame_id = "base_link"
     box_pose.pose.orientation.w = 0
-    box_pose.pose.position.x = 0.5
-    box_pose.pose.position.y = 0
-    box_pose.pose.position.z = 0
+    box_pose.pose.position.x = 0.4
+    box_pose.pose.position.y = 0.5
+    box_pose.pose.position.z = 0.3
 
     # Adds the box
     self.box_name = "box"
@@ -296,19 +323,35 @@ class MoveGroupInterface():
                                       timeout=timeout)
 
   def open_gripper(self):
-    pass
+    """Opens the gripper
+
+    Returns:
+      A bool that represents whether the gripper was fully opened
+    """
+    return self.go_to_hand_joint_goal([0.035, 0.035])
 
   def close_gripper(self):
-    pass
+    """Closes the gripper
+
+    Returns:
+      A bool that represents whether the gripper was fully closed
+    """
+    return self.go_to_hand_joint_goal([0, 0])
 
   def test(self):
     """A method to be used for feature testing. Currently testing pick and place."""
-    # print("Pose: " + str(self.move_group.get_current_pose()))
-    print("Joint State: " +
-          str(self.move_group_hand.get_current_joint_values()))
-    print(str(self.move_group_hand.get_joints()))
-    self.move_group_hand.go([0, 0], wait=True)
-    # self.go_to_pose(0.4, 0.5, 0.4)
-    # self.remove_box()
-    # self.add_box()
+
+    print(self.move_group_arm.get_current_pose())
+    print(self.move_group_arm.get_current_rpy())
+    print(self.move_group_arm.get_planning_frame())
+    print("going to pose")
+    self.go_to_pose(0.4, -0.5, 0.3)
+    print(self.move_group_arm.get_current_pose())
+    print(self.move_group_arm.get_current_rpy())
+    print("adding box")
+    self.add_box()
+    print("picking")
+    self.go_to_pose(0.4, 0.5, 0.1)
     # self.move_group_arm.pick(self.box_name)
+    print("removing box")
+    self.remove_box()

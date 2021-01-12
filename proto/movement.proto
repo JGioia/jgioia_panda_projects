@@ -34,7 +34,7 @@ message MovementOperation {
   optional Wait wait = 1;
   optional PoseGoal poseGoal = 2;
   optional JointGoal jointGoal = 3;
-  optional GripGoal grip = 4;
+  optional GripGoal gripGoal = 4;
 }
 
 message MovementCollection {

@@ -18,6 +18,12 @@ def main():
   moveOp4 = moveCol.operations.add()
   moveOp4.wait.seconds = 0.1
 
+  moveOp5 = moveCol.operations.add()
+  moveOp5.gripGoal.type = movement_pb2.GripGoal.GripType.OPEN
+
+  moveOp6 = moveCol.operations.add()
+  moveOp6.gripGoal.type = movement_pb2.GripGoal.GripType.CLOSE
+
   f = open("../proto/message1.txt", "wb")
   f.write(moveCol.SerializeToString())
   f.close()

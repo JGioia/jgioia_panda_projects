@@ -61,6 +61,15 @@ def run_move_op(moveOp, robotInterface):
     print("Moving to joint goal: " + str(jointGoal) + "...")
     robotInterface.go_to_joint_goal(jointGoal)
 
+  elif moveOp.HasField("gripGoal"):
+    if moveOp.gripGoal.HasField("type"):
+      if moveOp.gripGoal.type == movement_pb2.GripGoal.GripType.OPEN:
+        print("Opening gripper...")
+        robotInterface.open_gripper()
+      elif moveOp.gripGoal.type == movement_pb2.GripGoal.GripType.CLOSE:
+        print("Closing gripper...")
+        robotInterface.close_gripper()
+
 
 def main(file_path):
   """Moves the end effector of the panda to the poses specified in the file given
