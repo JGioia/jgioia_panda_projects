@@ -1,6 +1,6 @@
-#!/usr/bin/env python
 """Module that contains the MoveGroupInterface"""
 
+import numpy as np
 import sys
 import copy
 import rospy
@@ -21,7 +21,6 @@ def all_close(goal, actual, tolerance):
   Returns:
     A bool. This represents whether the goal is within tolerances of the actual
   """
-  all_equal = True
   if type(goal) is list:
     for index in range(len(goal)):
       if abs(actual[index] - goal[index]) > tolerance:
@@ -34,6 +33,36 @@ def all_close(goal, actual, tolerance):
     return all_close(pose_to_list(goal), pose_to_list(actual), tolerance)
 
   return True
+
+
+def rpy_to_quaternion(roll, pitch, yaw):
+  """Converts rpy angle form to quaternion angle form.
+  
+  This function was paraphrased from Wikipedia. 
+  https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+
+  Args:
+    roll (float): The angle with respect to the x axis
+    pitch (float): The angle with respect to the y axis
+    yaw (float): The angle with respect to the z axis
+
+  Returns:
+    A quaternion with the same orientation as the input.
+  """
+  cy = np.cos(yaw * 0.5)
+  sy = np.sin(yaw * 0.5)
+  cp = np.cos(pitch * 0.5)
+  sp = np.sin(pitch * 0.5)
+  cr = np.cos(roll * 0.5)
+  sr = np.sin(roll * 0.5)
+
+  orientation = geometry_msgs.msg.Quaternion()
+  orientation.w = cr * cp * cy + sr * sp * sy
+  orientation.x = sr * cp * cy - cr * sp * sy
+  orientation.y = cr * sp * cy + sr * cp * sy
+  orientation.z = cr * cp * sy - sr * sp * cy
+
+  return orientation
 
 
 class MoveGroupInterface():
@@ -100,13 +129,10 @@ class MoveGroupInterface():
     Returns:
       A bool that represents whether the expected state was reached before the timeout.
     """
-
     # Set the pose goal
     pose_goal = geometry_msgs.msg.Pose()
-    pose_goal.orientation.x = 0.1
-    pose_goal.orientation.y = 0
-    pose_goal.orientation.z = 0
-    pose_goal.orientation.w = 1
+
+    pose_goal.orientation = rpy_to_quaternion(0, np.pi, 0.25 * np.pi)
 
     # Deals with the case where a parameter is not set
     current_pose = self.move_group_arm.get_current_pose().pose
@@ -151,7 +177,6 @@ class MoveGroupInterface():
     Returns:
       A bool that represents whether the expected state was reached before the timeout.
     """
-
     # Deals with the case where a joint's goal is None
     current_joints = self.move_group_arm.get_current_joint_values()
     joint_goal = copy.deepcopy(joint_goal)
@@ -213,7 +238,6 @@ class MoveGroupInterface():
     Returns:
       A bool that represents whether the expected state was reached before the timeout.
     """
-
     start = rospy.get_time()
     seconds = rospy.get_time()
 
@@ -238,6 +262,31 @@ class MoveGroupInterface():
     return False
 
   def add_box(self, timeout=4):
+    # Copy class variables to local variables to make the web tutorials more clear.
+    # In practice, you should use the class variables directly unless you have a good
+    # reason not to.
+    box_name = self.box_name
+    scene = self.scene
+
+    ## BEGIN_SUB_TUTORIAL add_box
+    ##
+    ## Adding Objects to the Planning Scene
+    ## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ## First, we will create a box in the planning scene at the location of the left finger:
+    box_pose = geometry_msgs.msg.PoseStamped()
+    box_pose.header.frame_id = "panda_leftfinger"
+    box_pose.pose.orientation.w = 1.0
+    box_pose.pose.position.z = 0.07  # slightly above the end effector
+    box_name = "box"
+    scene.add_box(box_name, box_pose, size=(0.1, 0.1, 0.1))
+
+    ## END_SUB_TUTORIAL
+    # Copy local variables back to class variables. In practice, you should use the class
+    # variables directly unless you have a good reason not to.
+    self.box_name = box_name
+    return self.wait_for_state_update(box_is_known=True, timeout=timeout)
+
+  def add_box2(self, timeout=4):
     """Adds a box at the location of the panda's left box stores it in an object variable.
 
     Args:
@@ -247,7 +296,6 @@ class MoveGroupInterface():
     Returns:
       A bool that represents whether the box was successfully added
     """
-
     # Creates the pose for the box to be placed at
     box_pose = geometry_msgs.msg.PoseStamped()
     box_pose.header.frame_id = "base_link"
@@ -273,11 +321,10 @@ class MoveGroupInterface():
     Returns:
       A bool that represents whether the box was successfully attached
     """
-
     # Attaches the box to the hand group of the robot
     grasping_group = 'hand'
-    touch_links = self.robot.get_link_names(group=grasping_group)
-    self.scene.attach_box(self.eef_link, self.box_name, touch_links=touch_links)
+    touch_links = robot.get_link_names(group=grasping_group)
+    self.scene.attach_box('base_link', self.box_name)
 
     # Checks whether the box was successfully added
     return self.wait_for_state_update(box_is_attached=True,
@@ -294,7 +341,6 @@ class MoveGroupInterface():
     Returns:
         A bool that represents whether the box was successfully detached
     """
-
     # Detach the box
     self.scene.remove_attached_object(self.eef_link, name=self.box_name)
 
@@ -313,7 +359,6 @@ class MoveGroupInterface():
     Returns:
         A bool that represents whether the box was successfully removed
     """
-
     # Remvoe the box from the world
     self.scene.remove_world_object(self.box_name)
 
@@ -340,6 +385,11 @@ class MoveGroupInterface():
 
   def test(self):
     """A method to be used for feature testing. Currently testing pick and place."""
+    # print(self.move_group_arm.get_current_pose())
+    # print(self.move_group_arm.get_current_rpy())
+    # self.go_to_pose(None, None, None)
+    # print(self.move_group_arm.get_current_pose())
+    # print(self.move_group_arm.get_current_rpy())
 
     print(self.move_group_arm.get_current_pose())
     print(self.move_group_arm.get_current_rpy())
@@ -350,8 +400,16 @@ class MoveGroupInterface():
     print(self.move_group_arm.get_current_rpy())
     print("adding box")
     self.add_box()
+    # self.attach_box()
     print("picking")
-    self.go_to_pose(0.4, 0.5, 0.1)
-    # self.move_group_arm.pick(self.box_name)
+    # self.go_to_pose(0.4, 0.5, 0.1)
+    self.move_group_arm.pick(self.box_name)
+    print("closing gripper")
+    self.close_gripper()
     print("removing box")
+    self.detach_box()
     self.remove_box()
+    print("opening gripper")
+    self.open_gripper()
+    print(self.move_group_arm.get_current_pose())
+    print(self.move_group_arm.get_current_rpy())

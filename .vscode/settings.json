@@ -11,6 +11,7 @@
   "cSpell.words": [
     "Franka",
     "Rviz",
+    "numpy",
     "proto",
     "protobuf",
     "roscpp"

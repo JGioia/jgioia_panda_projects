@@ -1,74 +1,88 @@
 #!/usr/bin/env python
-"""Executable module that parses poses and moves the Panda"""
+"""Executable module that parses operations and moves the Panda"""
 
 import move_group_interface
 import sys
-from moveit_commander import robot
 import rospy
 import time
 import movement_pb2
 
 
 def parse_protobuf(file_path):
-  moveCol = movement_pb2.MovementCollection()
+  """Parses the MovementCollection stored as a str in the given file
+
+  Args:
+      file_path (str): The path to the file storing the MovementCollection
+
+  Returns:
+      The MovementCollection parsed from the file
+  """
+  move_col = movement_pb2.MovementCollection()
   file = open(file_path, "r")
-  moveCol.ParseFromString(file.read())
+  move_col.ParseFromString(file.read())
   file.close()
-  return moveCol
+  return move_col
 
 
-def run_move_op(moveOp, robotInterface):
-  if moveOp.HasField("wait"):
-    print("Waiting " + str(moveOp.wait.seconds) + " seconds...")
-    time.sleep(moveOp.wait.seconds)
+def run_move_op(move_op, robot_interface):
+  """Makes the robot do the given MovementOperation
 
-  elif moveOp.HasField("poseGoal"):
-    xGoal = None
-    yGoal = None
-    zGoal = None
+  Args:
+      move_op (MovementOperation): The operation to do
+      robot_interface (MoveGroupInterface): The interface for the robot to 
+        run the operations on
+  """
+  if move_op.HasField("wait"):
+    print("Waiting " + str(move_op.wait.seconds) + " seconds...")
+    time.sleep(move_op.wait.seconds)
 
-    if moveOp.poseGoal.HasField("x"):
-      xGoal = moveOp.poseGoal.x
-    if moveOp.poseGoal.HasField("y"):
-      yGoal = moveOp.poseGoal.y
-    if moveOp.poseGoal.HasField("z"):
-      zGoal = moveOp.poseGoal.z
+  elif move_op.HasField("poseGoal"):
+    x_goal = None
+    y_goal = None
+    z_goal = None
 
-    print("Moving to position x = " + str(xGoal) + ", y = " + str(yGoal) +
-          ", z = " + str(zGoal) + "...")
-    robotInterface.go_to_pose(xGoal, yGoal, zGoal)
+    if move_op.poseGoal.HasField("x"):
+      x_goal = move_op.poseGoal.x
+    if move_op.poseGoal.HasField("y"):
+      y_goal = move_op.poseGoal.y
+    if move_op.poseGoal.HasField("z"):
+      z_goal = move_op.poseGoal.z
 
-  elif moveOp.HasField("jointGoal"):
-    jointGoal = [None for i in range(7)]
+    print("Moving to position x = " + str(x_goal) + ", y = " + str(y_goal) +
+          ", z = " + str(z_goal) + "...")
+    robot_interface.go_to_pose(x_goal, y_goal, z_goal)
+
+  elif move_op.HasField("jointGoal"):
+    joint_goal = [None for i in range(7)]
 
     # I'm not a big fan of doing it this way, but I want to maintain the ability
     # to just specify some of the joints
-    if moveOp.jointGoal.HasField("joint1"):
-      jointGoal[0] = moveOp.jointGoal.joint1
-    if moveOp.jointGoal.HasField("joint2"):
-      jointGoal[1] = moveOp.jointGoal.joint2
-    if moveOp.jointGoal.HasField("joint3"):
-      jointGoal[2] = moveOp.jointGoal.joint3
-    if moveOp.jointGoal.HasField("joint4"):
-      jointGoal[3] = moveOp.jointGoal.joint4
-    if moveOp.jointGoal.HasField("joint5"):
-      jointGoal[4] = moveOp.jointGoal.joint5
-    if moveOp.jointGoal.HasField("joint6"):
-      jointGoal[5] = moveOp.jointGoal.joint6
-    if moveOp.jointGoal.HasField("joint7"):
-      jointGoal[6] = moveOp.jointGoal.joint7
+    if move_op.jointGoal.HasField("joint1"):
+      joint_goal[0] = move_op.jointGoal.joint1
+    if move_op.jointGoal.HasField("joint2"):
+      joint_goal[1] = move_op.jointGoal.joint2
+    if move_op.jointGoal.HasField("joint3"):
+      joint_goal[2] = move_op.jointGoal.joint3
+    if move_op.jointGoal.HasField("joint4"):
+      joint_goal[3] = move_op.jointGoal.joint4
+    if move_op.jointGoal.HasField("joint5"):
+      joint_goal[4] = move_op.jointGoal.joint5
+    if move_op.jointGoal.HasField("joint6"):
+      joint_goal[5] = move_op.jointGoal.joint6
+    if move_op.jointGoal.HasField("joint7"):
+      joint_goal[6] = move_op.jointGoal.joint7
 
-    print("Moving to joint goal: " + str(jointGoal) + "...")
-    robotInterface.go_to_joint_goal(jointGoal)
+    print("Moving to joint goal: " + str(joint_goal) + "...")
+    robot_interface.go_to_joint_goal(joint_goal)
 
-  elif moveOp.HasField("gripGoal"):
-    if moveOp.gripGoal.HasField("type"):
-      if moveOp.gripGoal.type == movement_pb2.GripGoal.GripType.OPEN:
+  elif move_op.HasField("gripGoal"):
+    if move_op.gripGoal.HasField("type"):
+      if move_op.gripGoal.type == movement_pb2.GripGoal.GripType.OPEN:
         print("Opening gripper...")
-        robotInterface.open_gripper()
-      elif moveOp.gripGoal.type == movement_pb2.GripGoal.GripType.CLOSE:
+        robot_interface.open_gripper()
+      elif move_op.gripGoal.type == movement_pb2.GripGoal.GripType.CLOSE:
         print("Closing gripper...")
-        robotInterface.close_gripper()
+        robot_interface.close_gripper()
 
 
 def main(file_path):
@@ -77,17 +91,16 @@ def main(file_path):
   Args:
     file_path (string): the file path to the file containing poses
   """
-
   try:
     # Initializes the move group interface
     robot_interface = move_group_interface.MoveGroupInterface()
 
     # Parses the poses from the input file path
-    moveCol = parse_protobuf(file_path)
+    move_col = parse_protobuf(file_path)
 
     # Goes to every pose in the list of poses
-    for moveOp in moveCol.operations:
-      run_move_op(moveOp, robot_interface)
+    for move_op in move_col.operations:
+      run_move_op(move_op, robot_interface)
 
   # Ends the program if we get one of these errors
   except rospy.ROSInterruptException:
