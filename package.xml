@@ -23,4 +23,5 @@
   <exec_depend>joint_state_publisher</exec_depend>
   <exec_depend>xacro</exec_depend>
   <exec_depend>protobuf</exec_depend>
+  <exec_depend>moveit_resources</exec_depend>
 </package>

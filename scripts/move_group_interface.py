@@ -8,6 +8,7 @@ import moveit_commander
 import moveit_msgs.msg
 import geometry_msgs.msg
 from moveit_commander.conversions import pose_to_list
+import time
 
 
 def all_close(goal, actual, tolerance):
@@ -276,9 +277,10 @@ class MoveGroupInterface():
     box_pose = geometry_msgs.msg.PoseStamped()
     box_pose.header.frame_id = "panda_leftfinger"
     box_pose.pose.orientation.w = 1.0
-    box_pose.pose.position.z = 0.07  # slightly above the end effector
+    box_pose.pose.position.z = 0.04  # slightly above the end effector
+    box_pose.pose.position.y = -0.035
     box_name = "box"
-    scene.add_box(box_name, box_pose, size=(0.1, 0.1, 0.1))
+    scene.add_box(box_name, box_pose, size=(0.03, 0.03, 0.03))
 
     ## END_SUB_TUTORIAL
     # Copy local variables back to class variables. In practice, you should use the class
@@ -306,7 +308,7 @@ class MoveGroupInterface():
 
     # Adds the box
     self.box_name = "box"
-    self.scene.add_box(self.box_name, box_pose, size=(0.1, 0.1, 0.1))
+    self.scene.add_box(self.box_name, box_pose, size=(0.02, 0.02, 0.02))
 
     # Checks whether the box was successfully added
     return self.wait_for_state_update(box_is_known=True, timeout=timeout)
@@ -323,8 +325,8 @@ class MoveGroupInterface():
     """
     # Attaches the box to the hand group of the robot
     grasping_group = 'hand'
-    touch_links = robot.get_link_names(group=grasping_group)
-    self.scene.attach_box('base_link', self.box_name)
+    touch_links = self.robot.get_link_names(group=grasping_group)
+    self.scene.attach_box("panda_link8", self.box_name)
 
     # Checks whether the box was successfully added
     return self.wait_for_state_update(box_is_attached=True,
@@ -385,31 +387,4 @@ class MoveGroupInterface():
 
   def test(self):
     """A method to be used for feature testing. Currently testing pick and place."""
-    # print(self.move_group_arm.get_current_pose())
-    # print(self.move_group_arm.get_current_rpy())
-    # self.go_to_pose(None, None, None)
-    # print(self.move_group_arm.get_current_pose())
-    # print(self.move_group_arm.get_current_rpy())
-
-    print(self.move_group_arm.get_current_pose())
-    print(self.move_group_arm.get_current_rpy())
-    print(self.move_group_arm.get_planning_frame())
-    print("going to pose")
-    self.go_to_pose(0.4, -0.5, 0.3)
-    print(self.move_group_arm.get_current_pose())
-    print(self.move_group_arm.get_current_rpy())
-    print("adding box")
-    self.add_box()
-    # self.attach_box()
-    print("picking")
-    # self.go_to_pose(0.4, 0.5, 0.1)
-    self.move_group_arm.pick(self.box_name)
-    print("closing gripper")
-    self.close_gripper()
-    print("removing box")
-    self.detach_box()
-    self.remove_box()
-    print("opening gripper")
-    self.open_gripper()
-    print(self.move_group_arm.get_current_pose())
-    print(self.move_group_arm.get_current_rpy())
+    pass
