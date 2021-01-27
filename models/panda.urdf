@@ -40,10 +40,18 @@
     </collision>
   </link>
 
-  <joint name="table_robot_joint" type="fixed">
+  <link name="world"/>
+
+  <joint name="table_world_joint" type="fixed">
     <parent link="base_link"/>
-    <child link="panda_link0"/>
+    <child link="world"/>
     <origin rpy="0 0 -1.57075" xyz="0 0 0"/>
+  </joint>
+
+  <joint name="world_panda_joint" type="fixed">
+    <parent link="world"/>
+    <child link="panda_link0"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
   </joint>
 
 </robot>

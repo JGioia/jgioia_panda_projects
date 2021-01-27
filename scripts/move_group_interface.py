@@ -8,7 +8,7 @@ import moveit_commander
 import moveit_msgs.msg
 import geometry_msgs.msg
 from moveit_commander.conversions import pose_to_list
-import time
+import franka_interface
 
 
 def all_close(goal, actual, tolerance):
@@ -387,4 +387,11 @@ class MoveGroupInterface():
 
   def test(self):
     """A method to be used for feature testing. Currently testing pick and place."""
-    pass
+    print("going to pose")
+    self.go_to_pose(0.4, -0.5, 0.3)
+
+    print("adding box")
+    self.add_box()
+    self.move_group_arm.set_support_surface_name("base_link")
+    self.move_group_arm.pick(self.box_name)
+    self.remove_box()

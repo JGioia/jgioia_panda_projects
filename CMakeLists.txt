@@ -157,9 +157,9 @@ include_directories(
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
 catkin_install_python(PROGRAMS
-  scripts/parse_poses.py
+  scripts/demo_pick_and_place.py
+  scripts/parse_operations.py
   scripts/move_group_python_interface_tutorial.py
-  scripts/move_group_interface.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
