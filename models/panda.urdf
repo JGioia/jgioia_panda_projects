@@ -11,33 +11,39 @@
     <color rgba="0.8 0.8 0.8 1"/>
   </material>
 
+  <material name="red">
+    <color rgba="1 0 0 1"/>
+  </material>
+
   <link name="base_link">
     <visual>
       <geometry>
         <mesh filename="package://jgioia_panda_projects/models/table.STL" scale="0.001 0.001 0.001"/>
       </geometry>
-      <origin rpy="1.57075 0 0" xyz="-0.913 0.43 -0.83"/>
+      <origin rpy="1.57075 0 0" xyz="-0.9112 0.4394 -0.831"/>
       <material name="gray"/>
     </visual>
-    <collision>
+
+    <!-- <collision>
       <geometry>
         <mesh filename="package://jgioia_panda_projects/models/table_collision.STL" scale="0.001 0.001 0.001"/>
       </geometry>
       <origin rpy="1.57075 0 0" xyz="-0.913 0.43 -0.83"/>
       <material name="gray"/>
-    </collision>
-    <!-- <collision>
+    </collision> -->
+    <collision>
       <geometry>
         <mesh filename="package://jgioia_panda_projects/models/table.STL" scale="0.001 0.001 0.001"/>
       </geometry>
-      <origin rpy="1.57075 0 0" xyz="-0.913 0.43 -0.83"/>
-    </collision> -->
-    <collision>
+      <origin rpy="1.57075 0 0" xyz="-0.9112 0.4394 -0.831"/>
+      <material name="gray"/>
+    </collision>
+    <!-- <collision>
       <geometry>
         <cylinder length="1" radius="1"/>
       </geometry>
       <origin xyz ="0 0 -589"/>
-    </collision>
+    </collision> -->
   </link>
 
   <link name="world"/>
