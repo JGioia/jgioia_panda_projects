@@ -4,6 +4,7 @@ import numpy as np
 import sys
 import copy
 import rospy
+import time
 import moveit_commander
 import moveit_msgs.msg
 import geometry_msgs.msg
@@ -117,6 +118,10 @@ class MoveGroupInterface():
 
     # Misc variables
     self.box_name = ''
+
+    self.box_pose = geometry_msgs.msg.PoseStamped()
+    self.box_pose.header.frame_id = "base_link"
+    self.box_pose.pose.orientation.w = 1.0
 
   def go_to_pose(self, x=None, y=None, z=None):
     """Makes end effector go to the pose position specified by the parameters
@@ -287,7 +292,7 @@ class MoveGroupInterface():
     self.box_name = box_name
     return self.wait_for_state_update(box_is_known=True, timeout=timeout)
 
-  def add_box2(self, timeout=4):
+  def add_box2(self, x, y, z, timeout=4):
     """Adds a box at the location of the panda's left box stores it in an object variable.
 
     Args:
@@ -297,20 +302,26 @@ class MoveGroupInterface():
     Returns:
       A bool that represents whether the box was successfully added
     """
-    # Creates the pose for the box to be placed at
-    box_pose = geometry_msgs.msg.PoseStamped()
-    box_pose.header.frame_id = "base_link"
-    box_pose.pose.orientation.w = 0
-    box_pose.pose.position.x = 0.4
-    box_pose.pose.position.y = 0.5
-    box_pose.pose.position.z = 0.3
-
-    # Adds the box
+    # print(x)
+    # type(x)
+    # type(0.4)
+    self.box_pose.pose.position.x = x
+    self.box_pose.pose.position.y = y
+    self.box_pose.pose.position.z = z
     self.box_name = "box"
-    self.scene.add_box(self.box_name, box_pose, size=(0.02, 0.02, 0.02))
-
-    # Checks whether the box was successfully added
+    self.scene.add_box(self.box_name, self.box_pose, size=(0.03, 0.03, 0.03))
     return self.wait_for_state_update(box_is_known=True, timeout=timeout)
+
+  def grab_box(self):
+    """Grabs the box assuming it has been added.
+    
+    Only works for a box of size (0.03, 0.03, 0.03) in the default orientation.
+    """
+    self.go_to_pose(self.box_pose.pose.position.x,
+                    self.box_pose.pose.position.y,
+                    self.box_pose.pose.position.z + 0.1)
+    self.go_to_hand_joint_goal([0.0155, 0])
+    self.attach_box()
 
   def attach_box(self, timeout=4):
     """Attaches the box to the Panda wrist.
@@ -360,6 +371,9 @@ class MoveGroupInterface():
     Returns:
         A bool that represents whether the box was successfully removed
     """
+    # Make sure box is detached
+    self.detach_box()
+
     # Remvoe the box from the world
     self.scene.remove_world_object(self.box_name)
 
@@ -387,11 +401,17 @@ class MoveGroupInterface():
   def test(self):
     """A method to be used for feature testing. Currently testing pick and place."""
     print("going to pose")
-    # self.go_to_pose(0.4, -0.5, 0.3)
+    self.go_to_pose(0.4, -0.5, 0.3)
 
-    # print("adding box")
-    # self.add_box()
-    # self.move_group_arm.set_support_surface_name("base_link")
-    # self.move_group_arm.pick(self.box_name)
-    # self.remove_box()
-    print(self.move_group_hand.get_joints())
+    print("adding box")
+    self.add_box2(0.4, -0.5, 0.03)
+
+    print("grab box")
+    self.grab_box()
+
+    print("move box")
+    self.go_to_pose(0.4, 0.5, 0.3)
+
+    print("remove box")
+    self.open_gripper()
+    self.remove_box()
