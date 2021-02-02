@@ -84,6 +84,32 @@ def run_move_op(move_op, robot_interface):
         print("Closing gripper...")
         robot_interface.close_gripper()
 
+  elif move_op.HasField("boxControl"):
+    if move_op.boxControl.HasField("type"):
+      if move_op.boxControl.type == movement_pb2.BoxControl.ControlType.ADD:
+        if move_op.boxControl.HasField("x") and move_op.boxControl.HasField(
+            "y") and move_op.boxControl.HasField("z"):
+          print("Adding box at x = " + str(move_op.boxControl.x) + ", y = " +
+                str(move_op.boxControl.y) + ", z = " +
+                str(move_op.boxControl.z) + "...")
+          robot_interface.add_box2(move_op.boxControl.x, move_op.boxControl.y,
+                                   move_op.boxControl.z)
+      elif move_op.boxControl.type == movement_pb2.BoxControl.ControlType.REMOVE:
+        print("Removing box...")
+        robot_interface.remove_box()
+      elif move_op.boxControl.type == movement_pb2.BoxControl.ControlType.ATTACH:
+        print("Attaching box...")
+        robot_interface.attach_box()
+      elif move_op.boxControl.type == movement_pb2.BoxControl.ControlType.DETACH:
+        print("Detaching box...")
+        robot_interface.detach_box()
+
+  elif move_op.HasField("manipulateBox"):
+    if move_op.manipulateBox.HasField("type"):
+      if move_op.manipulateBox.type == movement_pb2.ManipulateBox.ManipulationType.GRAB:
+        print("Grabbing box...")
+        robot_interface.grab_box()
+
 
 def main(file_path):
   """Moves the end effector of the panda to the poses specified in the file given
@@ -98,6 +124,10 @@ def main(file_path):
     # Parses the poses from the input file path
     move_col = parse_protobuf(file_path)
 
+    # Print a line to make the debug messages easier to read
+    print
+    print("Running Operations:")
+
     # Goes to every pose in the list of poses
     for move_op in move_col.operations:
       run_move_op(move_op, robot_interface)
@@ -111,7 +141,7 @@ def main(file_path):
 
 if __name__ == '__main__':
   # Default file we are parsing poses from
-  file_path = "/home/joseph/ws_moveit/src/jgioia_panda_projects/proto/message1.txt"
+  file_path = "/home/joseph/ws_moveit/src/jgioia_panda_projects/proto/demo2.txt"
 
   # Overrides default if file is specified in arguments
   if len(sys.argv) > 1:

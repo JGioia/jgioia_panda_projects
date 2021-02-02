@@ -30,11 +30,33 @@ message GripGoal {
   optional GripType type = 1;
 }
 
+message BoxControl {
+  enum ControlType {
+    ADD = 0;
+    REMOVE = 1;
+    ATTACH = 2;
+    DETACH = 3;
+  }
+  optional ControlType type = 1;
+  optional double x = 2;
+  optional double y = 3;
+  optional double z = 4;
+}
+
+message ManipulateBox {
+  enum ManipulationType {
+    GRAB = 0;
+  }
+  optional ManipulationType type = 1;
+}
+
 message MovementOperation {
   optional Wait wait = 1;
   optional PoseGoal poseGoal = 2;
   optional JointGoal jointGoal = 3;
   optional GripGoal gripGoal = 4;
+  optional BoxControl boxControl = 5;
+  optional ManipulateBox manipulateBox = 6;
 }
 
 message MovementCollection {

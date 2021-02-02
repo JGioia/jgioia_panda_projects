@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='movement.proto',
   package='Movement',
   syntax='proto2',
-  serialized_pb=_b('\n\x0emovement.proto\x12\x08Movement\"\x1a\n\x04Wait\x12\x12\n\x07seconds\x18\x01 \x01(\x01:\x01\x30\"+\n\x08PoseGoal\x12\t\n\x01x\x18\x01 \x01(\x01\x12\t\n\x01y\x18\x02 \x01(\x01\x12\t\n\x01z\x18\x03 \x01(\x01\"{\n\tJointGoal\x12\x0e\n\x06joint1\x18\x01 \x01(\x01\x12\x0e\n\x06joint2\x18\x02 \x01(\x01\x12\x0e\n\x06joint3\x18\x03 \x01(\x01\x12\x0e\n\x06joint4\x18\x04 \x01(\x01\x12\x0e\n\x06joint5\x18\x05 \x01(\x01\x12\x0e\n\x06joint6\x18\x06 \x01(\x01\x12\x0e\n\x06joint7\x18\x07 \x01(\x01\"V\n\x08GripGoal\x12)\n\x04type\x18\x01 \x01(\x0e\x32\x1b.Movement.GripGoal.GripType\"\x1f\n\x08GripType\x12\x08\n\x04OPEN\x10\x00\x12\t\n\x05\x43LOSE\x10\x01\"\xa5\x01\n\x11MovementOperation\x12\x1c\n\x04wait\x18\x01 \x01(\x0b\x32\x0e.Movement.Wait\x12$\n\x08poseGoal\x18\x02 \x01(\x0b\x32\x12.Movement.PoseGoal\x12&\n\tjointGoal\x18\x03 \x01(\x0b\x32\x13.Movement.JointGoal\x12$\n\x08gripGoal\x18\x04 \x01(\x0b\x32\x12.Movement.GripGoal\"E\n\x12MovementCollection\x12/\n\noperations\x18\x01 \x03(\x0b\x32\x1b.Movement.MovementOperation')
+  serialized_pb=_b('\n\x0emovement.proto\x12\x08Movement\"\x1a\n\x04Wait\x12\x12\n\x07seconds\x18\x01 \x01(\x01:\x01\x30\"+\n\x08PoseGoal\x12\t\n\x01x\x18\x01 \x01(\x01\x12\t\n\x01y\x18\x02 \x01(\x01\x12\t\n\x01z\x18\x03 \x01(\x01\"{\n\tJointGoal\x12\x0e\n\x06joint1\x18\x01 \x01(\x01\x12\x0e\n\x06joint2\x18\x02 \x01(\x01\x12\x0e\n\x06joint3\x18\x03 \x01(\x01\x12\x0e\n\x06joint4\x18\x04 \x01(\x01\x12\x0e\n\x06joint5\x18\x05 \x01(\x01\x12\x0e\n\x06joint6\x18\x06 \x01(\x01\x12\x0e\n\x06joint7\x18\x07 \x01(\x01\"V\n\x08GripGoal\x12)\n\x04type\x18\x01 \x01(\x0e\x32\x1b.Movement.GripGoal.GripType\"\x1f\n\x08GripType\x12\x08\n\x04OPEN\x10\x00\x12\t\n\x05\x43LOSE\x10\x01\"\x99\x01\n\nBoxControl\x12.\n\x04type\x18\x01 \x01(\x0e\x32 .Movement.BoxControl.ControlType\x12\t\n\x01x\x18\x02 \x01(\x01\x12\t\n\x01y\x18\x03 \x01(\x01\x12\t\n\x01z\x18\x04 \x01(\x01\":\n\x0b\x43ontrolType\x12\x07\n\x03\x41\x44\x44\x10\x00\x12\n\n\x06REMOVE\x10\x01\x12\n\n\x06\x41TTACH\x10\x02\x12\n\n\x06\x44\x45TACH\x10\x03\"e\n\rManipulateBox\x12\x36\n\x04type\x18\x01 \x01(\x0e\x32(.Movement.ManipulateBox.ManipulationType\"\x1c\n\x10ManipulationType\x12\x08\n\x04GRAB\x10\x00\"\xff\x01\n\x11MovementOperation\x12\x1c\n\x04wait\x18\x01 \x01(\x0b\x32\x0e.Movement.Wait\x12$\n\x08poseGoal\x18\x02 \x01(\x0b\x32\x12.Movement.PoseGoal\x12&\n\tjointGoal\x18\x03 \x01(\x0b\x32\x13.Movement.JointGoal\x12$\n\x08gripGoal\x18\x04 \x01(\x0b\x32\x12.Movement.GripGoal\x12(\n\nboxControl\x18\x05 \x01(\x0b\x32\x14.Movement.BoxControl\x12.\n\rmanipulateBox\x18\x06 \x01(\x0b\x32\x17.Movement.ManipulateBox\"E\n\x12MovementCollection\x12/\n\noperations\x18\x01 \x03(\x0b\x32\x1b.Movement.MovementOperation')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -46,6 +46,54 @@ _GRIPGOAL_GRIPTYPE = _descriptor.EnumDescriptor(
   serialized_end=312,
 )
 _sym_db.RegisterEnumDescriptor(_GRIPGOAL_GRIPTYPE)
+
+_BOXCONTROL_CONTROLTYPE = _descriptor.EnumDescriptor(
+  name='ControlType',
+  full_name='Movement.BoxControl.ControlType',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='ADD', index=0, number=0,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='REMOVE', index=1, number=1,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='ATTACH', index=2, number=2,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='DETACH', index=3, number=3,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=410,
+  serialized_end=468,
+)
+_sym_db.RegisterEnumDescriptor(_BOXCONTROL_CONTROLTYPE)
+
+_MANIPULATEBOX_MANIPULATIONTYPE = _descriptor.EnumDescriptor(
+  name='ManipulationType',
+  full_name='Movement.ManipulateBox.ManipulationType',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='GRAB', index=0, number=0,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=543,
+  serialized_end=571,
+)
+_sym_db.RegisterEnumDescriptor(_MANIPULATEBOX_MANIPULATIONTYPE)
 
 
 _WAIT = _descriptor.Descriptor(
@@ -229,6 +277,91 @@ _GRIPGOAL = _descriptor.Descriptor(
 )
 
 
+_BOXCONTROL = _descriptor.Descriptor(
+  name='BoxControl',
+  full_name='Movement.BoxControl',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='type', full_name='Movement.BoxControl.type', index=0,
+      number=1, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='x', full_name='Movement.BoxControl.x', index=1,
+      number=2, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='y', full_name='Movement.BoxControl.y', index=2,
+      number=3, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='z', full_name='Movement.BoxControl.z', index=3,
+      number=4, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _BOXCONTROL_CONTROLTYPE,
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=315,
+  serialized_end=468,
+)
+
+
+_MANIPULATEBOX = _descriptor.Descriptor(
+  name='ManipulateBox',
+  full_name='Movement.ManipulateBox',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='type', full_name='Movement.ManipulateBox.type', index=0,
+      number=1, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _MANIPULATEBOX_MANIPULATIONTYPE,
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=470,
+  serialized_end=571,
+)
+
+
 _MOVEMENTOPERATION = _descriptor.Descriptor(
   name='MovementOperation',
   full_name='Movement.MovementOperation',
@@ -264,6 +397,20 @@ _MOVEMENTOPERATION = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='boxControl', full_name='Movement.MovementOperation.boxControl', index=4,
+      number=5, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='manipulateBox', full_name='Movement.MovementOperation.manipulateBox', index=5,
+      number=6, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -276,8 +423,8 @@ _MOVEMENTOPERATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=315,
-  serialized_end=480,
+  serialized_start=574,
+  serialized_end=829,
 )
 
 
@@ -307,21 +454,29 @@ _MOVEMENTCOLLECTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=482,
-  serialized_end=551,
+  serialized_start=831,
+  serialized_end=900,
 )
 
 _GRIPGOAL.fields_by_name['type'].enum_type = _GRIPGOAL_GRIPTYPE
 _GRIPGOAL_GRIPTYPE.containing_type = _GRIPGOAL
+_BOXCONTROL.fields_by_name['type'].enum_type = _BOXCONTROL_CONTROLTYPE
+_BOXCONTROL_CONTROLTYPE.containing_type = _BOXCONTROL
+_MANIPULATEBOX.fields_by_name['type'].enum_type = _MANIPULATEBOX_MANIPULATIONTYPE
+_MANIPULATEBOX_MANIPULATIONTYPE.containing_type = _MANIPULATEBOX
 _MOVEMENTOPERATION.fields_by_name['wait'].message_type = _WAIT
 _MOVEMENTOPERATION.fields_by_name['poseGoal'].message_type = _POSEGOAL
 _MOVEMENTOPERATION.fields_by_name['jointGoal'].message_type = _JOINTGOAL
 _MOVEMENTOPERATION.fields_by_name['gripGoal'].message_type = _GRIPGOAL
+_MOVEMENTOPERATION.fields_by_name['boxControl'].message_type = _BOXCONTROL
+_MOVEMENTOPERATION.fields_by_name['manipulateBox'].message_type = _MANIPULATEBOX
 _MOVEMENTCOLLECTION.fields_by_name['operations'].message_type = _MOVEMENTOPERATION
 DESCRIPTOR.message_types_by_name['Wait'] = _WAIT
 DESCRIPTOR.message_types_by_name['PoseGoal'] = _POSEGOAL
 DESCRIPTOR.message_types_by_name['JointGoal'] = _JOINTGOAL
 DESCRIPTOR.message_types_by_name['GripGoal'] = _GRIPGOAL
+DESCRIPTOR.message_types_by_name['BoxControl'] = _BOXCONTROL
+DESCRIPTOR.message_types_by_name['ManipulateBox'] = _MANIPULATEBOX
 DESCRIPTOR.message_types_by_name['MovementOperation'] = _MOVEMENTOPERATION
 DESCRIPTOR.message_types_by_name['MovementCollection'] = _MOVEMENTCOLLECTION
 
@@ -352,6 +507,20 @@ GripGoal = _reflection.GeneratedProtocolMessageType('GripGoal', (_message.Messag
   # @@protoc_insertion_point(class_scope:Movement.GripGoal)
   ))
 _sym_db.RegisterMessage(GripGoal)
+
+BoxControl = _reflection.GeneratedProtocolMessageType('BoxControl', (_message.Message,), dict(
+  DESCRIPTOR = _BOXCONTROL,
+  __module__ = 'movement_pb2'
+  # @@protoc_insertion_point(class_scope:Movement.BoxControl)
+  ))
+_sym_db.RegisterMessage(BoxControl)
+
+ManipulateBox = _reflection.GeneratedProtocolMessageType('ManipulateBox', (_message.Message,), dict(
+  DESCRIPTOR = _MANIPULATEBOX,
+  __module__ = 'movement_pb2'
+  # @@protoc_insertion_point(class_scope:Movement.ManipulateBox)
+  ))
+_sym_db.RegisterMessage(ManipulateBox)
 
 MovementOperation = _reflection.GeneratedProtocolMessageType('MovementOperation', (_message.Message,), dict(
   DESCRIPTOR = _MOVEMENTOPERATION,

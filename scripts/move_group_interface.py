@@ -317,6 +317,7 @@ class MoveGroupInterface():
     
     Only works for a box of size (0.03, 0.03, 0.03) in the default orientation.
     """
+    self.open_gripper()
     self.go_to_pose(self.box_pose.pose.position.x,
                     self.box_pose.pose.position.y,
                     self.box_pose.pose.position.z + 0.1)
