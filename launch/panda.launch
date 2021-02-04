@@ -48,7 +48,7 @@
   </include>
 
   <!-- Run Rviz -->
-  <include file="$(find moveit_resources_panda_moveit_config)/launch/moveit_rviz.launch">
+  <include file="$(find jgioia_panda_projects)/launch/moveit_rviz.launch">
     <arg name="rviz_tutorial" value="$(arg rviz_tutorial)"/>
     <arg name="debug" value="$(arg debug)"/>
   </include>

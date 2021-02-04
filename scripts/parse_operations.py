@@ -92,8 +92,8 @@ def run_move_op(move_op, robot_interface):
           print("Adding box at x = " + str(move_op.boxControl.x) + ", y = " +
                 str(move_op.boxControl.y) + ", z = " +
                 str(move_op.boxControl.z) + "...")
-          robot_interface.add_box2(move_op.boxControl.x, move_op.boxControl.y,
-                                   move_op.boxControl.z)
+          robot_interface.add_box(move_op.boxControl.x, move_op.boxControl.y,
+                                  move_op.boxControl.z)
       elif move_op.boxControl.type == movement_pb2.BoxControl.ControlType.REMOVE:
         print("Removing box...")
         robot_interface.remove_box()

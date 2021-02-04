@@ -266,33 +266,7 @@ class MoveGroupInterface():
     # If we exited the while loop without returning then we timed out
     return False
 
-  def add_box(self, timeout=4):
-    # Copy class variables to local variables to make the web tutorials more clear.
-    # In practice, you should use the class variables directly unless you have a good
-    # reason not to.
-    box_name = self.box_name
-    scene = self.scene
-
-    ## BEGIN_SUB_TUTORIAL add_box
-    ##
-    ## Adding Objects to the Planning Scene
-    ## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ## First, we will create a box in the planning scene at the location of the left finger:
-    box_pose = geometry_msgs.msg.PoseStamped()
-    box_pose.header.frame_id = "panda_leftfinger"
-    box_pose.pose.orientation.w = 1.0
-    box_pose.pose.position.z = 0.04  # slightly above the end effector
-    box_pose.pose.position.y = -0.035
-    box_name = "box"
-    scene.add_box(box_name, box_pose, size=(0.03, 0.03, 0.03))
-
-    ## END_SUB_TUTORIAL
-    # Copy local variables back to class variables. In practice, you should use the class
-    # variables directly unless you have a good reason not to.
-    self.box_name = box_name
-    return self.wait_for_state_update(box_is_known=True, timeout=timeout)
-
-  def add_box2(self, x, y, z, timeout=4):
+  def add_box(self, x, y, z, timeout=4):
     """Adds a box at the location of the panda's left box stores it in an object variable.
 
     Args:
@@ -302,13 +276,11 @@ class MoveGroupInterface():
     Returns:
       A bool that represents whether the box was successfully added
     """
-    # print(x)
-    # type(x)
-    # type(0.4)
     self.box_pose.pose.position.x = x
     self.box_pose.pose.position.y = y
     self.box_pose.pose.position.z = z
     self.box_name = "box"
+
     self.scene.add_box(self.box_name, self.box_pose, size=(0.03, 0.03, 0.03))
     return self.wait_for_state_update(box_is_known=True, timeout=timeout)
 
@@ -405,7 +377,7 @@ class MoveGroupInterface():
     self.go_to_pose(0.4, -0.5, 0.3)
 
     print("adding box")
-    self.add_box2(0.4, -0.5, 0.03)
+    self.add_box(0.4, -0.5, 0.03)
 
     print("grab box")
     self.grab_box()
