@@ -74,7 +74,7 @@ class MoveGroupInterface():
 
     # First initialize `moveit_commander`_ and a `rospy`_ node:
     moveit_commander.roscpp_initialize(sys.argv)
-    rospy.init_node('move_group_python_interface_tutorial', anonymous=True)
+    rospy.init_node('move_group_interface', anonymous=True)
 
     # Instantiate a `RobotCommander`_ object. Provides information such as the robot's
     # kinematic model and the robot's current joint states
@@ -122,6 +122,11 @@ class MoveGroupInterface():
     self.box_pose = geometry_msgs.msg.PoseStamped()
     self.box_pose.header.frame_id = "base_link"
     self.box_pose.pose.orientation.w = 1.0
+
+    # self.scene.add_mesh(
+    # "table", [0, 0, 0],
+    # "/home/joseph/ws_moveit/src/jgioia_panda_projects/models/table.STL",
+    # size=(0.001, 0.001, 0.001))
 
   def go_to_pose(self, x=None, y=None, z=None):
     """Makes end effector go to the pose position specified by the parameters
@@ -372,19 +377,12 @@ class MoveGroupInterface():
     return self.go_to_hand_joint_goal([0, 0])
 
   def test(self):
-    """A method to be used for feature testing. Currently testing pick and place."""
-    print("going to pose")
-    self.go_to_pose(0.4, -0.5, 0.3)
+    """A method to be used for feature testing. Currently testing gazebo."""
+    print(self.move_group_hand.get_joints())
+    print(self.move_group_hand.get_current_state())
+    print(self.move_group_hand.get_random_joint_values())
+    print(self.go_to_hand_joint_goal([0.01]))
 
-    print("adding box")
-    self.add_box(0.4, -0.5, 0.03)
-
-    print("grab box")
-    self.grab_box()
-
-    print("move box")
-    self.go_to_pose(0.4, 0.5, 0.3)
-
-    print("remove box")
-    self.open_gripper()
-    self.remove_box()
+    # self.go_to_pose(0.4, 0.1, 0.15)
+    # self.go_to_pose(0.4, 0, 0.15)
+    # self.go_to_pose(0.4, -0.1, 0.15)

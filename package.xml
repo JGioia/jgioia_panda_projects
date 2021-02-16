@@ -24,4 +24,7 @@
   <exec_depend>xacro</exec_depend>
   <exec_depend>protobuf</exec_depend>
   <exec_depend>moveit_resources</exec_depend>
+  <exec_depend>franka_description</exec_depend>
+  <exec_depend>panda_simulation</exec_depend>
+  <exec_depend>gazebo_ros</exec_depend>
 </package>
