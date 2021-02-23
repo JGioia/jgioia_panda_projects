@@ -120,7 +120,7 @@ class MoveGroupInterface():
     self.box_name = ''
 
     self.box_pose = geometry_msgs.msg.PoseStamped()
-    self.box_pose.header.frame_id = "base_link"
+    self.box_pose.header.frame_id = "panda_link0"
     self.box_pose.pose.orientation.w = 1.0
 
     # self.scene.add_mesh(
@@ -298,7 +298,7 @@ class MoveGroupInterface():
     self.go_to_pose(self.box_pose.pose.position.x,
                     self.box_pose.pose.position.y,
                     self.box_pose.pose.position.z + 0.1)
-    self.go_to_hand_joint_goal([0.0155, 0])
+    self.go_to_hand_joint_goal([0.0, 0.0])
     self.attach_box()
 
   def attach_box(self, timeout=4):
@@ -378,11 +378,13 @@ class MoveGroupInterface():
 
   def test(self):
     """A method to be used for feature testing. Currently testing gazebo."""
-    print(self.move_group_hand.get_joints())
-    print(self.move_group_hand.get_current_state())
-    print(self.move_group_hand.get_random_joint_values())
-    print(self.go_to_hand_joint_goal([0.01]))
-
-    # self.go_to_pose(0.4, 0.1, 0.15)
-    # self.go_to_pose(0.4, 0, 0.15)
-    # self.go_to_pose(0.4, -0.1, 0.15)
+    print("open")
+    self.open_gripper()
+    print("move")
+    self.go_to_pose(0.42, 0, 0.2)
+    print("move")
+    self.go_to_pose(0.42, 0, 0.13)
+    print("close")
+    self.close_gripper()
+    print("move")
+    self.go_to_pose(0.42, 0, 0.3)
