@@ -21,7 +21,7 @@ class DepthSensorInterface():
     """Updates the internal representation of the depth image.
 
     Args:
-        depth_image (sensor_msgs.msg.Image): The new depth image
+      depth_image (sensor_msgs.msg.Image): The new depth image
     """
     self.depth_image = depth_image
 
