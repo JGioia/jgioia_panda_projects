@@ -118,6 +118,8 @@ def main(file_path):
     file_path (string): the file path to the file containing poses
   """
   try:
+    rospy.init_node("Parse Operations")
+
     # Initializes the move group interface
     robot_interface = move_group_interface.MoveGroupInterface()
 

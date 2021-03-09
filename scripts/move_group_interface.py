@@ -72,9 +72,8 @@ class MoveGroupInterface():
   def __init__(self):
     """Initializes the interface to control a Franka Emika Panda robot"""
 
-    # First initialize `moveit_commander`_ and a `rospy`_ node:
+    # First initialize `moveit_commander`:
     moveit_commander.roscpp_initialize(sys.argv)
-    rospy.init_node('move_group_interface', anonymous=True)
 
     # Instantiate a `RobotCommander`_ object. Provides information such as the robot's
     # kinematic model and the robot's current joint states
@@ -272,7 +271,7 @@ class MoveGroupInterface():
     return False
 
   def add_box(self, x, y, z, timeout=4):
-    """Adds a box at the location of the panda's left box stores it in an object variable.
+    """Adds a box at the location of the panda's left box stores it in an object variable. (DEPRECATED)
 
     Args:
       timeout (int): Optional; Number of seconds to wait as a maximum for the box to
@@ -293,11 +292,13 @@ class MoveGroupInterface():
     """Grabs the box assuming it has been added.
     
     Only works for a box of size (0.03, 0.03, 0.03) in the default orientation.
+    Assumes box_pose is a pose, not a pose_stamped
     """
     self.open_gripper()
-    self.go_to_pose(self.box_pose.pose.position.x,
-                    self.box_pose.pose.position.y,
-                    self.box_pose.pose.position.z + 0.1)
+    print("Pose goal: ", self.box_pose.position.x, self.box_pose.position.y,
+          self.box_pose.position.z + 0.1)
+    self.go_to_pose(self.box_pose.position.x, self.box_pose.position.y,
+                    self.box_pose.position.z + 0.1)
     self.go_to_hand_joint_goal([0.0, 0.0])
     self.attach_box()
 
@@ -322,7 +323,7 @@ class MoveGroupInterface():
                                       timeout=timeout)
 
   def detach_box(self, timeout=4):
-    """Detaches the box from the Panda wrist.
+    """Detaches the box from the Panda wrist. (DEPRECATED)
 
     Args:
       timeout (int): Optional; Number of seconds to wait as a maximum for the box to
@@ -340,7 +341,7 @@ class MoveGroupInterface():
                                       timeout=timeout)
 
   def remove_box(self, timeout=4):
-    """Remove the box from the planning scene. The box must be detached to do this.
+    """Remove the box from the planning scene. The box must be detached to do this. (DEPRECATED)
 
     Args:
       timeout (int): Optional; Number of seconds to wait as a maximum for the box to
@@ -378,17 +379,25 @@ class MoveGroupInterface():
 
   def test(self):
     """A method to be used for feature testing. Currently testing gazebo."""
+    # print("open")
+    # self.open_gripper()
+    # print("move")
+    # self.go_to_pose(0.41, -0.5, 0.2)
+    # print("move")
+    # self.go_to_pose(0.41, -0.5, 0.125)
+    # print("close")
+    # self.go_to_hand_joint_goal([0.014, 0.014])
+    # print("move")
+    # self.go_to_pose(0.41, -0.5, 0.2)
+
+    # DO NOT REMOVE: It kind of works
     print("open")
     self.open_gripper()
     print("move")
     self.go_to_pose(0.41, -0.5, 0.2)
     print("move")
-    self.go_to_pose(0.41, -0.5, 0.13)
+    self.go_to_pose(0.41, -0.5, 0.11)
     print("close")
     self.go_to_hand_joint_goal([0.014, 0.014])
     print("move")
-    self.go_to_pose(0.41, -0.45, 0.13)
-    # self.close_gripper()
-    # self.go_to_pose(0.3, -0.5, 0.13)
-    # self.go_to_pose(0.5, -0.5, 0.13)
-    # self.go_to_pose(0.4, 0.5, 0.3)
+    self.go_to_pose(0.41, -0.5, 0.2)

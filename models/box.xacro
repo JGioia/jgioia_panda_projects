@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="simple_box">
-    <link name="object_base_link">
+    <!-- <link name="object_base_link">
     </link>
 
     <joint name="object_base_joint" type="fixed">
@@ -8,43 +8,30 @@
         <child link="object_link"/>
         <axis xyz="0 0 1" />
         <origin xyz="0.4 -0.5 0.4" rpy="0 0 0"/>
-    </joint>
+    </joint> -->
 
     <link name="object_link">
+        <origin xyz="0.4 -0.5 0.4" />
         <inertial>
-            <origin xyz="0 0 0" />
             <mass value="0.5" />
             <inertia ixx="0.0003" ixy="0.0" ixz="0.0" iyy="0.0003" iyz="0.0" izz="0.0003" />
         </inertial>
-        <!-- <surface>
-            <friction>
-                <ode>
-                    <mu>100</mu>
-                    <mu2>100</mu2>
-                </ode>
-            </friction>
-        </surface> -->
         <visual>
-            <origin xyz="0 0 0"/>
             <geometry>
                 <box size="0.03 0.03 0.03" />
             </geometry>
         </visual>
         <collision>
-            <origin xyz="0 0 0"/>
             <geometry>
                 <box size="0.03 0.03 0.03" />
             </geometry>
         </collision>
     </link>
 
-    <gazebo reference="object_base_link">
-        <mu1>0.5</mu1>
-        <mu2>0.5</mu2>
-        <gravity>1</gravity>
-    </gazebo>
-
     <gazebo reference="object_link">
         <material>Gazebo/Purple</material>
+        <mu1>100</mu1>
+        <mu2>100</mu2>
+        <gravity>1</gravity>
     </gazebo>
 </robot>

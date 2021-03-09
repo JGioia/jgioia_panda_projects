@@ -159,7 +159,6 @@ include_directories(
 catkin_install_python(PROGRAMS
   scripts/testing.py
   scripts/parse_operations.py
-  scripts/move_group_python_interface_tutorial.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

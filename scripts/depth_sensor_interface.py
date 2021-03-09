@@ -1,7 +1,7 @@
 """Module that contains the DepthSensorInterface class"""
 
 import rospy
-import sensor_msgs
+from sensor_msgs.msg import Image
 
 
 class DepthSensorInterface():
@@ -14,8 +14,8 @@ class DepthSensorInterface():
       topic_name (str): The name of the depth image topic. The topic must 
         return a sensor_msgs.msg.Image.
     """
-    rospy.init_node('DepthSensorInterface')
-    rospy.Subscriber(topic_name, sensor_msgs.msg.Image, self.update_image)
+    self.depth_image = Image()
+    rospy.Subscriber(topic_name, Image, self.update_image)
 
   def update_image(self, depth_image):
     """Updates the internal representation of the depth image.
