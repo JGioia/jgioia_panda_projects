@@ -12,7 +12,7 @@ class MoveItObject:
 
   def __init__(self,
                type,
-               model="",
+               mesh="",
                initial_pose=Pose(),
                world_frame="panda_link0",
                name=""):
@@ -21,14 +21,16 @@ class MoveItObject:
     Args:
       type (str): Type of object. See below for supported types.
         "box1" - 0.03 x 0.03 x 0.03 box
-      model (str): The filename of the stl.
+        "wall" - 2 x 0.25 x 2 box
+        "mesh" - Uses a file to generated the object
+      model (str): The filename of the mesh.
       initial_pose (geometry_msgs.msg.Pose): The pose of the object relative 
         to the world frame
       world_frame (str): The name of the world frame
       name (str): The name of the object. A random number will be added to make it unique.
     """
     self.type = type
-    self.model = model
+    self.mesh = mesh
     self.world_frame = world_frame
     self.scene = moveit_commander.PlanningSceneInterface()
 
@@ -41,25 +43,37 @@ class MoveItObject:
     # TODO: Should use static count to make name always unique
     self.name = name + str(random.randint(0, 9999))
 
-    self.make_object()
+    self.make()
 
-  def make_object(self):
+  def make(self):
     """Makes the object using the object_type field to determine the type
     """
     if (self.type == "box1"):
       self.__make_box1()
-    # TODO: Check if wait for state update is needed
+    elif (self.type == "wall"):
+      self.__make_wall()
+    elif (self.type == "mesh"):
+      self.__make_mesh()
 
   def __make_box1(self):
-    """Makes a 0.03x0.03x0.03 box at the field pose
+    """Makes a 0.03 x 0.03 x 0.03 box at the field pose
     """
     self.scene.add_box(self.name, self.pose, size=(0.03, 0.03, 0.03))
 
-  def remove_object(self):
+  def __make_wall(self):
+    """Make a 2 x 0.25 x 2 box at the field pose
+    """
+    self.scene.add_box(self.name, self.pose, size=(2, 0.25, 2))
+
+  def __make_mesh(self):
+    """Makes an object specified by the stl at the file of the name specified by the model field
+    """
+    self.scene.add_mesh(self.name, self.pose, self.mesh, size=(0.1, 0.1, 0.1))
+
+  def delete(self):
     """Removes the object from the planning scene.
     """
     self.scene.remove_world_object(self.name)
-    # TODO: Check if wait for state update is needed
 
   def set_pose(self, pose):
     """Changes the pose of the object
@@ -69,8 +83,8 @@ class MoveItObject:
     """
     # TODO: Want a better way to do this
     self.pose.pose = pose
-    self.remove_object()
-    self.make_object()
+    self.delete()
+    self.make()
 
   def wait_for_state_update(self,
                             box_is_known=True,

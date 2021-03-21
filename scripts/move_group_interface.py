@@ -379,25 +379,4 @@ class MoveGroupInterface():
 
   def test(self):
     """A method to be used for feature testing. Currently testing gazebo."""
-    # print("open")
-    # self.open_gripper()
-    # print("move")
-    # self.go_to_pose(0.41, -0.5, 0.2)
-    # print("move")
-    # self.go_to_pose(0.41, -0.5, 0.125)
-    # print("close")
-    # self.go_to_hand_joint_goal([0.014, 0.014])
-    # print("move")
-    # self.go_to_pose(0.41, -0.5, 0.2)
-
-    # DO NOT REMOVE: It kind of works
-    print("open")
-    self.open_gripper()
-    print("move")
-    self.go_to_pose(0.41, -0.5, 0.2)
-    print("move")
-    self.go_to_pose(0.41, -0.5, 0.11)
-    print("close")
-    self.go_to_hand_joint_goal([0.014, 0.014])
-    print("move")
-    self.go_to_pose(0.41, -0.5, 0.2)
+    pass
