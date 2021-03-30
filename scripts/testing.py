@@ -4,6 +4,7 @@
 from move_group_interface import MoveGroupInterface
 from depth_sensor_interface import DepthSensorInterface
 from link_pose_interface import LinkPoseInterface
+from ar_object_importer import ArObjectImporter
 from moveit_object import MoveItObject
 from geometry_msgs.msg import Pose
 
@@ -29,19 +30,21 @@ def main():
   #     mesh="/home/joseph/ws_moveit/src/jgioia_panda_projects/models/table.STL")
 
   # DEMO 7: Collision avoidance of a gazebo object
-  box_pose = link_interface.find_pose("box::link")
-  box = MoveItObject(type="box1", initial_pose=box_pose)
-  robot_interface.go_to_pose(box_pose.position.x, box_pose.position.y - 0.1,
-                             0.1 + box_pose.position.z)
-  robot_interface.close_gripper()
-  robot_interface.go_to_pose(box_pose.position.x, box_pose.position.y + 0.1,
-                             0.1 + box_pose.position.z)
-  box.delete()
-  robot_interface.go_to_pose(box_pose.position.x, box_pose.position.y - 0.1,
-                             0.1 + box_pose.position.z)
+  # box_pose = link_interface.find_pose("box::link")
+  # box = MoveItObject(type="box1", initial_pose=box_pose)
+  # robot_interface.go_to_pose(box_pose.position.x, box_pose.position.y - 0.1,
+  #                            0.1 + box_pose.position.z)
+  # robot_interface.close_gripper()
+  # robot_interface.go_to_pose(box_pose.position.x, box_pose.position.y + 0.1,
+  #                            0.1 + box_pose.position.z)
+  # box.delete()
+  # robot_interface.go_to_pose(box_pose.position.x, box_pose.position.y - 0.1,
+  #                            0.1 + box_pose.position.z)
 
-  # # TEST 1: Robot interace test method
-  # robot_interface.test()
+  # DEMO 8: MoveIt object publishing from AR tag
+  object_importer = ArObjectImporter(MoveItObject(type="box1"))
+  time.sleep(30)
+  object_importer.stop()
 
 
 def demo_archive():
