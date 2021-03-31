@@ -1,6 +1,6 @@
 <launch>
 
-  <arg name="model" default="$(find jgioia_panda_projects)/models/panda.urdf"/>
+  <arg name="model" default="$(find jgioia_panda_projects)/models/panda_table.urdf"/>
   <arg name="gui" default="false"/>
   <arg name="rvizconfig" default="$(find jgioia_panda_projects)/rviz/default.rviz"/>
 

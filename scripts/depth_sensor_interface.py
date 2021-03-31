@@ -7,7 +7,7 @@ from sensor_msgs.msg import Image
 class DepthSensorInterface():
   """Provides useful methods for getting information from a depth sensor"""
 
-  def __init__(self, topic_name):
+  def __init__(self):
     """Initializes the interface to get depth info from the specified topic.
 
     Args:
@@ -15,7 +15,7 @@ class DepthSensorInterface():
         return a sensor_msgs.msg.Image.
     """
     self.depth_image = Image()
-    rospy.Subscriber(topic_name, Image, self.update_image)
+    rospy.Subscriber("camera/depth/image_raw", Image, self.update_image)
 
   def update_image(self, depth_image):
     """Updates the internal representation of the depth image.

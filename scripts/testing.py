@@ -3,7 +3,7 @@
 
 from move_group_interface import MoveGroupInterface
 from depth_sensor_interface import DepthSensorInterface
-from link_pose_interface import LinkPoseInterface
+from gazebo_object_importer import LinkPoseInterface
 from ar_object_importer import ArObjectImporter
 from moveit_object import MoveItObject
 from geometry_msgs.msg import Pose
@@ -17,8 +17,8 @@ def main():
   rospy.init_node("Testing")
 
   robot_interface = MoveGroupInterface()
-  depth_interface = DepthSensorInterface("camera/depth/image_raw")
-  link_interface = LinkPoseInterface("/gazebo/link_states")
+  depth_interface = DepthSensorInterface()
+  link_interface = LinkPoseInterface()
 
   time.sleep(1)
 

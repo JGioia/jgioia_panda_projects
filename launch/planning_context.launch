@@ -6,11 +6,14 @@
   <!-- The name of the parameter under which the URDF is loaded -->
   <arg name="robot_description" default="robot_description"/>
 
+  <arg name="camera" default="true" />
+
   <!-- Load universal robot description format (URDF) -->
-  <param name="$(arg robot_description)" command="$(find xacro)/xacro '$(find jgioia_panda_projects)/models/panda.urdf'"/>
+  <param if="$(arg camera)" name="$(arg robot_description)" command="$(find xacro)/xacro '$(find jgioia_panda_projects)/models/panda_table_camera.urdf'"/>
+  <param unless="$(arg camera)" name="$(arg robot_description)" command="$(find xacro)/xacro '$(find jgioia_panda_projects)/models/panda_table.urdf'"/>
 
   <!-- The semantic description that corresponds to the URDF -->
-  <param name="$(arg robot_description)_semantic" command="$(find xacro)/xacro '$(find jgioia_panda_projects)/models/panda.srdf.xacro'"/>
+  <param name="$(arg robot_description)_semantic" command="$(find xacro)/xacro '$(find jgioia_panda_projects)/models/panda_table.srdf.xacro'"/>
 
   <!-- Load updated joint limits (override information from URDF) -->
   <group ns="$(arg robot_description)_planning">

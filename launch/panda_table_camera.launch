@@ -1,0 +1,9 @@
+<launch>
+  <!-- Launch rviz, moveit, and the robot + camera model-->
+  <include file="$(find jgioia_panda_projects)/launch/panda_table.launch">
+    <arg name="camera" value="true" />
+  </include>
+
+  <!-- Launch camera -->
+  <include file="$(find jgioia_panda_projects)/launch/rs_d435_camera_with_model.launch" />
+</launch>

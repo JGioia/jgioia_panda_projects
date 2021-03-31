@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="panda">
+  <xacro:arg name="use_nominal_extrinsics" default="false" />
+  <xacro:include filename="$(find realsense2_description)/urdf/_d435i.urdf.xacro"/>
+
+  <xacro:include filename="$(find jgioia_panda_projects)/models/panda_table.urdf"/>
+
+  <xacro:sensor_d435i parent="base_link" use_nominal_extrinsics="$(arg use_nominal_extrinsics)">
+    <origin xyz="1 0 0.5" rpy="0 0 0"/>
+  </xacro:sensor_d435i>
+</robot>
