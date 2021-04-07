@@ -127,13 +127,16 @@ class MoveGroupInterface():
     # "/home/joseph/ws_moveit/src/jgioia_panda_projects/models/table.STL",
     # size=(0.001, 0.001, 0.001))
 
-  def go_to_pose(self, x=None, y=None, z=None):
+  def go_to_pose(self, x=None, y=None, z=None, roll=None, pitch=None, yaw=None):
     """Makes end effector go to the pose position specified by the parameters
     
     Args:
       x (float or None): The goal x position. If None, then goal position is current position.
       y (float or None): The goal y position. If None, then goal position is current position.
       z (float or None): The goal z position. If None, then goal position is current position.
+      roll (float or None): The goal roll in radians. If None, then goal roll = 0
+      pitch (float or None): The goal pitch in radians. If None, then goal pitch = pi
+      yaw (float or None): The goal yaw in radians. If None, then goal yaw = pi / 4
       
     Returns:
       A bool that represents whether the expected state was reached before the timeout.
@@ -141,9 +144,19 @@ class MoveGroupInterface():
     # Set the pose goal
     pose_goal = geometry_msgs.msg.Pose()
 
-    pose_goal.orientation = rpy_to_quaternion(0, np.pi, 0.25 * np.pi)
+    print(yaw)
 
-    # Deals with the case where a parameter is not set
+    # Deal with the case where an orientation is not set
+    if roll == None:
+      roll = 0
+    if pitch == None:
+      pitch = np.pi
+    if yaw == None:
+      yaw = 0.25 * np.pi
+    print(yaw)
+    pose_goal.orientation = rpy_to_quaternion(roll, pitch, yaw)
+
+    # Deal with the case where a position is not set
     current_pose = self.move_group_arm.get_current_pose().pose
     if x == None:
       pose_goal.position.x = current_pose.position.x
@@ -292,7 +305,7 @@ class MoveGroupInterface():
     """Grabs the box assuming it has been added.
     
     Only works for a box of size (0.03, 0.03, 0.03) in the default orientation.
-    Assumes box_pose is a pose, not a pose_stamped
+    Assumes box_pose is a pose_stamped. TODO: Not working
     """
     self.open_gripper()
     print("Pose goal: ", self.box_pose.position.x, self.box_pose.position.y,
@@ -301,6 +314,51 @@ class MoveGroupInterface():
                     self.box_pose.position.z + 0.1)
     self.go_to_hand_joint_goal([0.0, 0.0])
     self.attach_box()
+
+  def grab_box1(self, box):
+    """Grabs the box1 MoveItObject provided
+    
+    Args:
+      box (MoveItObject): A "box1" type MoveItObject
+    """
+    self.open_gripper()
+    print("Pose goal: ", box.pose.pose.position.x, box.pose.pose.position.y,
+          box.pose.pose.position.z + 0.1)
+    self.go_to_pose(box.pose.pose.position.x, box.pose.pose.position.y,
+                    box.pose.pose.position.z + 0.1)
+    self.go_to_hand_joint_goal([0.14, 0.14])
+
+  def slide_to(self, x, y):
+    """Moves horizontally to the x,y position at the current z position. 
+    
+    Moves in a way such that if it is grasping a box, the box will move
+    with it.
+
+    Args:
+        x (float): The x position to go to
+        y (float): The y position to go to
+    """
+    current_pose = self.move_group_arm.get_current_pose().pose
+    x_change = x - current_pose.position.x
+    y_change = y - current_pose.position.y
+    angle = np.arctan(x_change / y_change)
+
+    # Set angle correctly
+    goal = geometry_msgs.msg.Pose()
+    goal.position = current_pose.position
+    goal.orientation = rpy_to_quaternion(0, np.pi, angle - np.pi / 4)
+    path, fraction = self.move_group_arm.compute_cartesian_path([goal], 0.001,
+                                                                0.0)
+    self.move_group_arm.execute(path)
+
+    # Follow straight line to goal
+    goal.position.x = x
+    goal.position.y = y
+    goal.position.z = current_pose.position.z
+    goal.orientation = rpy_to_quaternion(0, np.pi, angle - np.pi / 4)
+    path, fraction = self.move_group_arm.compute_cartesian_path([goal], 0.001,
+                                                                0.0)
+    self.move_group_arm.execute(path)
 
   def attach_box(self, timeout=4):
     """Attaches the box to the Panda wrist.
@@ -379,4 +437,5 @@ class MoveGroupInterface():
 
   def test(self):
     """A method to be used for feature testing. Currently testing gazebo."""
+    print(self.move_group_arm.get_known_constraints())
     pass

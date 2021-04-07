@@ -43,6 +43,7 @@ class MoveItObject:
     # TODO: Should use static count to make name always unique
     self.name = name + str(random.randint(0, 9999))
 
+    self.visibility = False
     self.make()
 
   def make(self):
@@ -54,6 +55,7 @@ class MoveItObject:
       self.__make_wall()
     elif (self.type == "mesh"):
       self.__make_mesh()
+    self.visibility = True
 
   def __make_box1(self):
     """Makes a 0.03 x 0.03 x 0.03 box at the field pose
@@ -73,7 +75,9 @@ class MoveItObject:
   def delete(self):
     """Removes the object from the planning scene.
     """
-    self.scene.remove_world_object(self.name)
+    if (self.visibility):
+      self.scene.remove_world_object(self.name)
+      self.visibility = False
 
   def set_pose(self, pose):
     """Changes the pose of the object
@@ -85,6 +89,21 @@ class MoveItObject:
     self.pose.pose = pose
     self.delete()
     self.make()
+
+  def set_pose_stamped(self, pose):
+    """Changes the pose of the object
+
+    Args:
+        pose ([type]): [description]
+    """
+    self.pose = pose
+    self.delete()
+    self.make()
+
+    # Remake pose relative to world frame
+    self.pose = PoseStamped()
+    self.pose.header.frame_id = self.world_frame
+    self.pose.pose = Pose()  # TODO: Transform given pose
 
   def wait_for_state_update(self,
                             box_is_known=True,

@@ -1,0 +1,15 @@
+<launch>
+  <!-- Detects and grabs an object that has an april tag using the realsense camera.-->
+
+  <!-- Launch moveIt and the camera-->
+  <include file="$(find jgioia_panda_projects)/launch/panda_table_camera.launch" />
+
+  <!-- Launch april tag detection-->
+  <include file="$(find ar_track_alvar)/launch/pr2_indiv_no_kinect.launch">
+    <arg name="cam_image_topic" value="/camera/color/image_raw" />
+	<arg name="cam_info_topic" value="/camera/color/camera_info" />
+	<arg name="output_frame" value="/camera_color_optical_frame" />
+  </include>
+
+  <!-- Launch the manipulation script-->
+</launch>

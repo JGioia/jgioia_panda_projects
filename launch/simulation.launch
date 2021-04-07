@@ -1,4 +1,6 @@
 <launch>
+    <!-- Fork of panda_simulation/launch/simulation.launch-->
+
     <param name="robot_description" command="$(find xacro)/xacro --inorder $(find franka_description)/robots/panda_arm_hand.urdf.xacro" />
     <!-- <param name="robot_description" command="$(find xacro)/xacro inorder $(find jgioia_panda_projects)/models/table.urdf" /> -->
 
@@ -11,7 +13,7 @@
     <arg name="load_gripper" default="true" />
 
     <!--launch GAZEBO with own world configuration -->
-    <include file="$(find jgioia_panda_projects)/launch/empty_world.launch">
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
         <!-- <arg name="world_name" value="$(find robotics_assisted_tomography)/worlds/tomography.world"/> -->
         <arg name="debug" value="$(arg debug)" />
         <arg name="gui" value="$(arg gui)" />

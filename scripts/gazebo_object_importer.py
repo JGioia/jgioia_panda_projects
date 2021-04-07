@@ -13,7 +13,8 @@ class GazeboObjectImporter():
 
     Args:
       moveit_object (MoveItObject): The object whose pose we want to update
-      link_name (str): The name of the link whose pose we are using to update the object
+      link_name (str): The name of the link whose pose we are using to update 
+        the object. Should be in form "model::link".
     """
     self.link_name = link_name
     self.moveit_object = moveit_object
@@ -32,13 +33,13 @@ class GazeboObjectImporter():
       link_states (gazebo_msgs.msg.LinkStates): The new link states
     """
     if (not self.is_stopped):
-      self.link_pose_interface.__update(link_states)
+      self.link_pose_interface.link_states = link_states
       new_pose = self.link_pose_interface.find_pose(self.link_name)
       if (new_pose != None):
         self.last_pose = new_pose
         self.is_visible = True
         self.moveit_object.set_pose(new_pose)
-      else:
+      elif (self.is_visible):
         self.is_visible = False
         self.moveit_object.delete()
 

@@ -22,6 +22,16 @@ def main():
 
   time.sleep(1)
 
+  # # DEMO 4: Object state publisher
+  box_pose = link_interface.find_pose("box_purple1::object_link")
+  box = MoveItObject(type="box1", initial_pose=box_pose)
+  while (True):
+    time.sleep(0.1)
+    box.set_pose(link_interface.find_pose("box_purple1::object_link"))
+
+  # robot_interface.slide_to(0.5, -0.3)
+  # robot_interface.test()
+
   # DEMO 5: Depth based grabber
 
   # # DEMO 6: Table
@@ -41,10 +51,10 @@ def main():
   # robot_interface.go_to_pose(box_pose.position.x, box_pose.position.y - 0.1,
   #                            0.1 + box_pose.position.z)
 
-  # DEMO 8: MoveIt object publishing from AR tag
-  object_importer = ArObjectImporter(MoveItObject(type="box1"))
-  time.sleep(30)
-  object_importer.stop()
+  # # DEMO 8: MoveIt object publishing from AR tag
+  # object_importer = ArObjectImporter(MoveItObject(type="box1"))
+  # time.sleep(30)
+  # object_importer.stop()
 
 
 def demo_archive():
@@ -74,7 +84,7 @@ def demo_archive():
   # robot_interface.box_pose = link_interface.find_pose("box::link")
   # robot_interface.grab_box()
 
-  # DEMO 3: Collision avoidance
+  # # DEMO 3: Collision avoidance
   # wall_pose = Pose()
   # wall_pose.position.x = 1.5
   # wall = MoveItObject(type="wall", initial_pose=wall_pose)

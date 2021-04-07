@@ -2,6 +2,7 @@
 
 from ar_track_alvar_msgs.msg import AlvarMarkers
 from geometry_msgs.msg import Pose
+from geometry_msgs.msg import PoseStamped
 import rospy
 
 
@@ -20,7 +21,7 @@ class ArObjectImporter():
     self.is_visible = False
     self.max_ticks_since_seen = 10
     self.ticks_since_seen = self.max_ticks_since_seen + 1
-    self.last_pose = Pose()
+    self.last_pose = PoseStamped()
 
     rospy.Subscriber("/ar_pose_marker", AlvarMarkers, self.__update)
 
@@ -34,8 +35,9 @@ class ArObjectImporter():
       if (len(alvar_markers.markers) > 0):
         self.ticks_since_seen = 0
         self.is_visible = True
-        self.last_pose = alvar_markers.markers[0].pose.pose
-        self.moveit_object.set_pose(self.last_pose)
+        self.last_pose = alvar_markers.markers[0].pose
+        print(self.last_pose)
+        self.moveit_object.set_pose_stamped(self.last_pose)
       else:
         self.ticks_since_seen += 1
         if (self.ticks_since_seen > self.max_ticks_since_seen and
