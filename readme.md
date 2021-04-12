@@ -101,4 +101,4 @@ I encountered a significant amount of problems when creating this package. You m
 
 ## Contact info
 
-Lastly, feel free to contact me at jeg4@rice.edu if something is not working, as I might have dealt with the issue before.
+Lastly, feel free to contact me at jeg4@rice.edu, if something is not working, as I might have dealt with the issue before.
