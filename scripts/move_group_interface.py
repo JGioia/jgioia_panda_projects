@@ -341,24 +341,39 @@ class MoveGroupInterface():
     current_pose = self.move_group_arm.get_current_pose().pose
     x_change = x - current_pose.position.x
     y_change = y - current_pose.position.y
-    angle = np.arctan(x_change / y_change)
+    y_angle = np.arctan(x_change / y_change)
 
     # Set angle correctly
     goal = geometry_msgs.msg.Pose()
-    goal.position = current_pose.position
-    goal.orientation = rpy_to_quaternion(0, np.pi, angle - np.pi / 4)
+    # goal.position = current_pose.position
+    # goal.orientation = rpy_to_quaternion(0, np.pi, y_angle - np.pi / 4)
+    # path, fraction = self.move_group_arm.compute_cartesian_path([goal], 0.001,
+    #                                                             0.0)
+    # self.move_group_arm.execute(path)
+    self.rotate_gripper(y_angle - np.pi / 2)
+
+    # Follow straight line to goal
+    goal = self.move_group_arm.get_current_pose().pose
+    goal.position.x = x
+    goal.position.y = y
+    # goal.position.z = current_pose.position.z
+    # goal.orientation = rpy_to_quaternion(0, np.pi, y_angle - np.pi / 4)
     path, fraction = self.move_group_arm.compute_cartesian_path([goal], 0.001,
                                                                 0.0)
     self.move_group_arm.execute(path)
 
-    # Follow straight line to goal
-    goal.position.x = x
-    goal.position.y = y
-    goal.position.z = current_pose.position.z
-    goal.orientation = rpy_to_quaternion(0, np.pi, angle - np.pi / 4)
-    path, fraction = self.move_group_arm.compute_cartesian_path([goal], 0.001,
-                                                                0.0)
-    self.move_group_arm.execute(path)
+  def rotate_gripper(self, angle):
+    """Rotates the gripper to the specified angle from the x axis.
+
+    Args:
+        angle (float): The angle from the x-axis.
+    """
+    angle = (angle % np.pi) - np.pi
+    zero_joint = 2
+    neg_pi_joint = -1.1
+
+    joint_goal = zero_joint + (angle / np.pi) * (zero_joint - neg_pi_joint)
+    self.go_to_joint_goal([None, None, None, None, None, None, joint_goal])
 
   def attach_box(self, timeout=4):
     """Attaches the box to the Panda wrist.
@@ -437,5 +452,6 @@ class MoveGroupInterface():
 
   def test(self):
     """A method to be used for feature testing. Currently testing gazebo."""
-    print(self.move_group_arm.get_known_constraints())
+    # print(self.move_group_arm.get_current_pose().pose.orientation)
+    print(self.move_group_arm.get_current_joint_values())
     pass

@@ -4,6 +4,8 @@ import rospy
 from gazebo_msgs.msg import LinkStates
 from geometry_msgs.msg import Pose
 
+import time
+
 
 class GazeboObjectImporter():
   """Updates the position of a MoveItObject based on the pose of a link in gazebo"""
@@ -33,15 +35,22 @@ class GazeboObjectImporter():
       link_states (gazebo_msgs.msg.LinkStates): The new link states
     """
     if (not self.is_stopped):
+      self.ticks = 1
       self.link_pose_interface.link_states = link_states
       new_pose = self.link_pose_interface.find_pose(self.link_name)
       if (new_pose != None):
-        self.last_pose = new_pose
-        self.is_visible = True
-        self.moveit_object.set_pose(new_pose)
+        # Doesn't work like it should
+        if (self.last_pose != new_pose or self.is_visible):
+          self.last_pose = new_pose
+          self.is_visible = True
+          self.moveit_object.set_pose(new_pose)
       elif (self.is_visible):
         self.is_visible = False
         self.moveit_object.delete()
+
+  def update_pose(self):
+    """Updates the pose of the object stored
+    """
 
   def stop(self):
     """Stops updating and removes the object"""

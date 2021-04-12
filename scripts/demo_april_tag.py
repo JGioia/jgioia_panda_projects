@@ -16,8 +16,8 @@ def main():
   time.sleep(1)
 
   box = MoveItObject(type="box1")
-  object_importer = ArObjectImporter(box)
-  time.sleep(5)
+  ArObjectImporter(box)
+  time.sleep(50)
 
   print("grabbing")
   robot_interface.grab_box1(box)

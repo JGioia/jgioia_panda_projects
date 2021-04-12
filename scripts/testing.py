@@ -5,11 +5,13 @@ from move_group_interface import MoveGroupInterface
 from depth_sensor_interface import DepthSensorInterface
 from gazebo_object_importer import LinkPoseInterface
 from ar_object_importer import ArObjectImporter
+from moveit_commander import robot
 from moveit_object import MoveItObject
 from geometry_msgs.msg import Pose
 
 import rospy
 import time
+import numpy as np
 
 
 def main():
@@ -22,12 +24,32 @@ def main():
 
   time.sleep(1)
 
-  # # DEMO 4: Object state publisher
-  box_pose = link_interface.find_pose("box_purple1::object_link")
-  box = MoveItObject(type="box1", initial_pose=box_pose)
-  while (True):
-    time.sleep(0.1)
-    box.set_pose(link_interface.find_pose("box_purple1::object_link"))
+  floor = MoveItObject(type="floor")
+  time.sleep(10)
+  floor.delete()
+
+  # robot_interface.go_to_pose(yaw=0)
+  # robot_interface.test()
+  # time.sleep(4)
+  # robot_interface.go_to_pose(yaw=np.pi)
+  # robot_interface.test()
+
+  # robot_interface.rotate_gripper(0)
+  # time.sleep(5)
+  # robot_interface.rotate_gripper(-np.pi - 0.01)
+
+  # robot_interface.go_to_joint_goal([None, None, None, None, None, None, -2.89])
+  # robot_interface.test()
+  # time.sleep(4)
+  # robot_interface.go_to_joint_goal([None, None, None, None, None, None, 2.89])
+  # robot_interface.test()
+
+  # # # DEMO 4: Object state publisher
+  # box_pose = link_interface.find_pose("box_purple1::object_link")
+  # box = MoveItObject(type="box1", initial_pose=box_pose)
+  # while (True):
+  #   time.sleep(0.1)
+  #   box.set_pose(link_interface.find_pose("box_purple1::object_link"))
 
   # robot_interface.slide_to(0.5, -0.3)
   # robot_interface.test()

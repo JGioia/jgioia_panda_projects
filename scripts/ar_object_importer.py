@@ -37,7 +37,7 @@ class ArObjectImporter():
         self.is_visible = True
         self.last_pose = alvar_markers.markers[0].pose
         print(self.last_pose)
-        self.moveit_object.set_pose_stamped(self.last_pose)
+        self.moveit_object.set_pose(self.last_pose.pose)
       else:
         self.ticks_since_seen += 1
         if (self.ticks_since_seen > self.max_ticks_since_seen and

@@ -3,6 +3,7 @@
 import moveit_commander
 from geometry_msgs.msg import Pose
 from geometry_msgs.msg import PoseStamped
+import tf
 import random
 import rospy
 
@@ -22,6 +23,7 @@ class MoveItObject:
       type (str): Type of object. See below for supported types.
         "box1" - 0.03 x 0.03 x 0.03 box
         "wall" - 2 x 0.25 x 2 box
+        "floor" - 3 x 3 x 0.1 box that defaults to be centered right below the robot
         "mesh" - Uses a file to generated the object
       model (str): The filename of the mesh.
       initial_pose (geometry_msgs.msg.Pose): The pose of the object relative 
@@ -35,6 +37,8 @@ class MoveItObject:
     self.scene = moveit_commander.PlanningSceneInterface()
 
     # Make pose relative to world frame
+    if (type == "floor" and initial_pose == Pose()):
+      initial_pose.position.z -= 0.051
     self.pose = PoseStamped()
     self.pose.header.frame_id = world_frame
     self.pose.pose = initial_pose
@@ -55,6 +59,8 @@ class MoveItObject:
       self.__make_wall()
     elif (self.type == "mesh"):
       self.__make_mesh()
+    elif (self.type == "floor"):
+      self.__make_floor()
     self.visibility = True
 
   def __make_box1(self):
@@ -66,6 +72,11 @@ class MoveItObject:
     """Make a 2 x 0.25 x 2 box at the field pose
     """
     self.scene.add_box(self.name, self.pose, size=(2, 0.25, 2))
+
+  def __make_floor(self):
+    """Makes the floor
+    """
+    self.scene.add_box(self.name, self.pose, size=(4, 4, 0.1))
 
   def __make_mesh(self):
     """Makes an object specified by the stl at the file of the name specified by the model field
@@ -96,14 +107,11 @@ class MoveItObject:
     Args:
         pose ([type]): [description]
     """
-    self.pose = pose
+    t = tf.Transformer(True, rospy.Duration(10.0))
+    t.lookupTransform(self.world_frame, pose.header.frame_id, rospy.Time())
+    self.pose = tf.transformPose(self.world_frame, pose)
     self.delete()
     self.make()
-
-    # Remake pose relative to world frame
-    self.pose = PoseStamped()
-    self.pose.header.frame_id = self.world_frame
-    self.pose.pose = Pose()  # TODO: Transform given pose
 
   def wait_for_state_update(self,
                             box_is_known=True,
