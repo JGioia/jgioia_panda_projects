@@ -122,6 +122,8 @@ class MoveGroupInterface():
     self.box_pose.header.frame_id = "panda_link0"
     self.box_pose.pose.orientation.w = 1.0
 
+    self.move_group_arm.set_max_velocity_scaling_factor(1)
+
     # self.scene.add_mesh(
     # "table", [0, 0, 0],
     # "/home/joseph/ws_moveit/src/jgioia_panda_projects/models/table.STL",
@@ -326,9 +328,9 @@ class MoveGroupInterface():
           box.pose.pose.position.z + 0.1)
     self.go_to_pose(box.pose.pose.position.x, box.pose.pose.position.y,
                     box.pose.pose.position.z + 0.1)
-    self.go_to_hand_joint_goal([0.14, 0.14])
+    self.go_to_hand_joint_goal([0.0153, 0.0153])
 
-  def slide_to(self, x, y):
+  def slide_to(self, x, y, rotate=True):
     """Moves horizontally to the x,y position at the current z position. 
     
     Moves in a way such that if it is grasping a box, the box will move
@@ -344,13 +346,16 @@ class MoveGroupInterface():
     y_angle = np.arctan(x_change / y_change)
 
     # Set angle correctly
-    goal = geometry_msgs.msg.Pose()
-    # goal.position = current_pose.position
-    # goal.orientation = rpy_to_quaternion(0, np.pi, y_angle - np.pi / 4)
-    # path, fraction = self.move_group_arm.compute_cartesian_path([goal], 0.001,
-    #                                                             0.0)
-    # self.move_group_arm.execute(path)
-    self.rotate_gripper(y_angle - np.pi / 2)
+    if (rotate):
+      self.move_group_arm.set_max_velocity_scaling_factor(0.03)
+      goal = geometry_msgs.msg.Pose()
+      goal.position = current_pose.position
+      goal.orientation = rpy_to_quaternion(0, np.pi, y_angle - np.pi / 4)
+      path, fraction = self.move_group_arm.compute_cartesian_path([goal], 0.001,
+                                                                  0.0)
+      self.move_group_arm.execute(path)
+      # self.rotate_gripper(y_angle - np.pi / 2)
+      self.move_group_arm.set_max_velocity_scaling_factor(1)
 
     # Follow straight line to goal
     goal = self.move_group_arm.get_current_pose().pose

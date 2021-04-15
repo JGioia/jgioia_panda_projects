@@ -25,74 +25,81 @@ def main():
 
   floor = MoveItObject(type="floor")
 
-  purple_box1 = MoveItObject("box1")
-  purple_box2 = MoveItObject("box1")
-  yellow_box1 = MoveItObject("box1")
-  yellow_box2 = MoveItObject("box1")
-  purple_box1_tracker = GazeboObjectImporter(purple_box1,
-                                             "box_purple1::object_link")
-  purple_box2_tracker = GazeboObjectImporter(purple_box2,
-                                             "box_purple2::object_link")
-  yellow_box1_tracker = GazeboObjectImporter(yellow_box1,
-                                             "box_yellow1::object_link")
-  yellow_box2_tracker = GazeboObjectImporter(yellow_box2,
-                                             "box_yellow2::object_link")
+  # purple_box1 = MoveItObject("box1")
+  # purple_box2 = MoveItObject("box1")
+  # yellow_box1 = MoveItObject("box1")
+  # yellow_box2 = MoveItObject("box1")
+  # purple_box1_tracker = GazeboObjectImporter(purple_box1,
+  #                                            "box_purple1::object_link")
+  # purple_box2_tracker = GazeboObjectImporter(purple_box2,
+  #                                            "box_purple2::object_link")
+  # yellow_box1_tracker = GazeboObjectImporter(yellow_box1,
+  #                                            "box_yellow1::object_link")
+  # yellow_box2_tracker = GazeboObjectImporter(yellow_box2,
+  #                                            "box_yellow2::object_link")
 
-  time.sleep(10)
+  # robot_interface.rotate_gripper(0)
 
-  # robot_interface.open_gripper()
+  # time.sleep(4)
+  # robot_interface.rotate_gripper(np.pi / 2)
+  # time.sleep(4)
+  # robot_interface.rotate_gripper(np.pi - 0.1)
 
-  # # Purple box 1
-  # robot_interface.go_to_pose(0.2, 0.6, 0.2)
-  # robot_interface.go_to_pose(0.2, 0.6, 0.125)
-  # robot_interface.go_to_hand_joint_goal([0.0155, 0.0155])
-  # robot_interface.slide_to(0.2, 0.5)
-  # robot_interface.slide_to(0.5, 0.5)
-  # robot_interface.open_gripper()
-  # robot_interface.go_to_pose(0.5, 0.5, 0.2)
+  robot_interface.open_gripper()
 
-  # # Turn on collision between open and next close
+  # Purple box 1
+  robot_interface.go_to_pose(0.2, 0.6, 0.2)
+  robot_interface.go_to_pose(0.2, 0.6, 0.125)
+  robot_interface.go_to_hand_joint_goal([0.01505, 0.01505])
+  robot_interface.slide_to(0.2, 0.5)
+  robot_interface.slide_to(0.5, 0.5)
+  robot_interface.open_gripper()
+  robot_interface.go_to_pose(0.5, 0.5, 0.2)
 
-  # # Purple box 2
-  # robot_interface.go_to_pose(-0.1, 0.6, 0.2)
-  # robot_interface.go_to_pose(-0.1, 0.6, 0.125)
-  # robot_interface.go_to_hand_joint_goal([0.0155, 0.0155])
-  # robot_interface.slide_to(-0.1, 0.5)
-  # robot_interface.slide_to(0.4, 0.5)
-  # robot_interface.open_gripper()
-  # robot_interface.go_to_pose(0.4, 0.5, 0.2)
+  # Turn on collision between open and next close
 
-  # # Yellow box 1
-  # robot_interface.go_to_pose(0.1, 0.6, 0.2)
-  # robot_interface.go_to_pose(0.1, 0.6, 0.125)
-  # robot_interface.go_to_hand_joint_goal([0.0155, 0.0155])
-  # robot_interface.slide_to(0.1, 0.7)
-  # robot_interface.slide_to(-0.5, 0.7)
-  # robot_interface.open_gripper()
-  # robot_interface.go_to_pose(-0.5, 0.7, 0.2)
+  # Purple box 2
+  robot_interface.go_to_pose(-0.1, 0.601, 0.2)
+  robot_interface.go_to_pose(-0.1, 0.601, 0.125)
+  robot_interface.go_to_hand_joint_goal([0.01505, 0.01505])
+  robot_interface.slide_to(-0.1, 0.5)
+  robot_interface.slide_to(-0.11, 0.5, False)
+  robot_interface.slide_to(0.4, 0.5)
+  robot_interface.open_gripper()
+  robot_interface.go_to_pose(0.4, 0.5, 0.2)
 
-  # # Yellow box 2
-  # robot_interface.go_to_pose(-0.2, 0.6, 0.2)
-  # robot_interface.go_to_pose(-0.2, 0.6, 0.125)
-  # robot_interface.go_to_hand_joint_goal([0.0155, 0.0155])
-  # robot_interface.slide_to(-0.2, 0.7)
-  # robot_interface.slide_to(-0.4, 0.7)
-  # robot_interface.open_gripper()
-  # robot_interface.go_to_pose(-0.4, 0.7, 0.2)
+  # Yellow box 1
+  robot_interface.go_to_pose(0.1, 0.6, 0.2)
+  robot_interface.go_to_pose(0.1, 0.6, 0.125)
+  robot_interface.go_to_hand_joint_goal([0.01505, 0.01505])
+  robot_interface.slide_to(0.1, 0.5)
+  robot_interface.slide_to(-0.5, 0.5)
+  robot_interface.open_gripper()
+  robot_interface.go_to_pose(-0.5, 0.5, 0.2)
+
+  # Yellow box 2
+  robot_interface.go_to_pose(-0.2, 0.6, 0.2)
+  robot_interface.go_to_pose(-0.2, 0.6, 0.125)
+  robot_interface.go_to_hand_joint_goal([0.01505, 0.01505])
+  robot_interface.slide_to(-0.2, 0.5)
+  robot_interface.slide_to(-0.21, 0.5, False)
+  robot_interface.slide_to(-0.4, 0.5)
+  robot_interface.open_gripper()
+  robot_interface.go_to_pose(-0.4, 0.5, 0.2)
 
   # robot_interface.grab_box1(purple_box1)
   # robot_interface.slide_to(purple_box1.pose.pose.x,
   #                          purple_box1.pose.pose.y - 0.1)
   # robot_interface.slide_to(0.5, purple_box1.pose.pose.y)
 
-  yellow_box1_tracker.stop()
-  yellow_box2_tracker.stop()
-  purple_box1_tracker.stop()
-  purple_box2_tracker.stop()
-  yellow_box1.delete()
-  yellow_box2.delete()
-  purple_box1.delete()
-  purple_box2.delete()
+  # yellow_box1_tracker.stop()
+  # yellow_box2_tracker.stop()
+  # purple_box1_tracker.stop()
+  # purple_box2_tracker.stop()
+  # yellow_box1.delete()
+  # yellow_box2.delete()
+  # purple_box1.delete()
+  # purple_box2.delete()
   floor.delete()
 
 

@@ -3,7 +3,8 @@
 import moveit_commander
 from geometry_msgs.msg import Pose
 from geometry_msgs.msg import PoseStamped
-import tf
+import tf2_ros
+import tf2_geometry_msgs
 import random
 import rospy
 
@@ -15,7 +16,7 @@ class MoveItObject:
                type,
                mesh="",
                initial_pose=Pose(),
-               world_frame="panda_link0",
+               world_frame="base_link",
                name=""):
     """Initializes the object and publishes it to the topic
 
@@ -42,6 +43,9 @@ class MoveItObject:
     self.pose = PoseStamped()
     self.pose.header.frame_id = world_frame
     self.pose.pose = initial_pose
+
+    self.tfBuffer = tf2_ros.Buffer()
+    self.listener = tf2_ros.TransformListener(self.tfBuffer)
 
     # Generate a unique name
     # TODO: Should use static count to make name always unique
@@ -107,9 +111,11 @@ class MoveItObject:
     Args:
         pose ([type]): [description]
     """
-    t = tf.Transformer(True, rospy.Duration(10.0))
-    t.lookupTransform(self.world_frame, pose.header.frame_id, rospy.Time())
-    self.pose = tf.transformPose(self.world_frame, pose)
+    transform = self.tfBuffer.lookup_transform(self.world_frame,
+                                               pose.header.frame_id,
+                                               rospy.Time())
+
+    self.pose = tf2_geometry_msgs.do_transform_pose(pose, transform)
     self.delete()
     self.make()
 
