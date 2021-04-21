@@ -1,8 +1,8 @@
+<!-- Fork of panda_simulation/launch/simulation.launch-->
+<!-- Starts the gazebo simulation and rviz with the panda model. -->
 <launch>
-    <!-- Fork of panda_simulation/launch/simulation.launch-->
 
     <param name="robot_description" command="$(find xacro)/xacro --inorder $(find franka_description)/robots/panda_arm_hand.urdf.xacro" />
-    <!-- <param name="robot_description" command="$(find xacro)/xacro inorder $(find jgioia_panda_projects)/models/table.urdf" /> -->
 
     <!-- GAZEBO arguments -->
     <arg name="paused" default="false" />

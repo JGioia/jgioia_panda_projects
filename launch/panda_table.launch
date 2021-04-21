@@ -1,3 +1,4 @@
+<!-- Launches the panda + table model. -->
 <launch>
 
   <arg name="camera" default="false" />

@@ -1,5 +1,5 @@
+<!-- Launches the panda simulation with boxes, for the gazebo manipulation demo. Does not start the demo script. -->
 <launch>
-  <!-- Sorts boxes by color. Does not acutally detect box color, just remembers which box is which color.-->
 
   <!-- Launch the simulation.-->
   <include file="$(find jgioia_panda_projects)/launch/simulation.launch" />
@@ -11,9 +11,5 @@
   <node name="spawn_object2" pkg="gazebo_ros" type="spawn_model" args="-param box_yellow_description -urdf -model box_yellow1 -x 0.1 -y 0.6 -z 0.1"/>
   <node name="spawn_object3" pkg="gazebo_ros" type="spawn_model" args="-param box_purple_description -urdf -model box_purple2 -x -0.1 -y 0.6 -z 0.1"/>
   <node name="spawn_object4" pkg="gazebo_ros" type="spawn_model" args="-param box_yellow_description -urdf -model box_yellow2 -x -0.2 -y 0.6 -z 0.1"/>
-
-  <!-- Sort the boxes-->
-  <!-- TODO: This isn't doing anything right now-->
-  <node name="sort_boxes" pkg="jgioia_panda_projects" type="demo_gazebo_manipulation" />
 
 </launch>

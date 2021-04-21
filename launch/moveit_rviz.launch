@@ -1,3 +1,4 @@
+<!-- Helper launch file that starts rviz with the appropriate configuration. No reason to run this from the command line.-->
 <launch>
 
   <arg name="debug" default="false" />
@@ -5,7 +6,7 @@
   <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
 
   <arg name="rviz_tutorial" default="false" />
-  <arg name="command_args" value="-d $(find jgioia_panda_projects)/launch/default.rviz" />
+  <arg name="command_args" value="-d $(find jgioia_panda_projects)/config/default.rviz" />
 
   <node name="$(anon rviz)" launch-prefix="$(arg launch_prefix)" pkg="rviz" type="rviz" respawn="false"
 	args="$(arg command_args)" output="screen">

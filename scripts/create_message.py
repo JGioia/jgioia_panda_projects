@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import movement_pb2
-"""Creates the protocol buffer that contains the move operations."""
+"""Creates the protocol buffer that contains the move operations. NOTE: Protocol buffer format is outdated and will not work in the current version."""
 
 
 def main():

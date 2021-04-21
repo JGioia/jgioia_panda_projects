@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""An executable module where I test features. Currently working on pick and place."""
+"""An executable module where I test features."""
 
 from move_group_interface import MoveGroupInterface
 from depth_sensor_interface import DepthSensorInterface

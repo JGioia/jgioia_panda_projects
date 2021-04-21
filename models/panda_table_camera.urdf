@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- A model of the panda, the table, and the camera attached to the panda's hand. -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="panda">
   <xacro:arg name="use_nominal_extrinsics" default="false" />
   <xacro:include filename="$(find realsense2_description)/urdf/_d435i.urdf.xacro"/>
 
   <xacro:include filename="$(find jgioia_panda_projects)/models/panda_table.urdf"/>
 
+  <!-- Specifies how the camera is attached to the panda's hand. Editing the origin will move the camera.-->
   <xacro:sensor_d435i parent="panda_hand" use_nominal_extrinsics="$(arg use_nominal_extrinsics)">
     <origin xyz="0.06 0 0.05" rpy="0 -1.57075 0"/>
   </xacro:sensor_d435i>

@@ -1,3 +1,4 @@
+<!-- Launches the panda + table + camera model and starts the camera. -->
 <launch>
   <!-- Launch rviz, moveit, and the robot + camera model-->
   <include file="$(find jgioia_panda_projects)/launch/panda_table.launch">

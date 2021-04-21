@@ -1,4 +1,4 @@
-"""Module that contains the LinkPoseInterface class"""
+"""Module that contains the GazeboObjectImporter and LinkPoseInterface classes"""
 
 import rospy
 from gazebo_msgs.msg import LinkStates

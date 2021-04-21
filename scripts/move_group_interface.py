@@ -3,10 +3,7 @@
 import numpy as np
 import sys
 import copy
-import rospy
-import time
 import moveit_commander
-import moveit_msgs.msg
 import geometry_msgs.msg
 from moveit_commander.conversions import pose_to_list
 
@@ -67,7 +64,7 @@ def rpy_to_quaternion(roll, pitch, yaw):
 
 
 class MoveGroupInterface():
-  """Provides useful methods for robot interaction that utilize the MoveGroupCommander class"""
+  """Provides useful methods for robot interaction that utilize MoveIt's MoveGroupCommander"""
 
   def __init__(self):
     """Initializes the interface to control a Franka Emika Panda robot"""
@@ -79,29 +76,17 @@ class MoveGroupInterface():
     # kinematic model and the robot's current joint states
     self.robot = moveit_commander.RobotCommander()
 
-    # Instantiate a `PlanningSceneInterface`_ object.  This provides a remote interface
-    # for getting, setting, and updating the robot's internal understanding of the
-    # surrounding world:
-    self.scene = moveit_commander.PlanningSceneInterface()
-
     # Instantiate a `MoveGroupCommander`_ object.  This object is an interface
     # to a planning group (group of joints).
     # This interface can be used to plan and execute motions:
     self.move_group_arm = moveit_commander.MoveGroupCommander("panda_arm")
     self.move_group_hand = moveit_commander.MoveGroupCommander("hand")
 
-    # Create a `DisplayTrajectory`_ ROS publisher which is used to display
-    # trajectories in Rviz:
-    self.display_trajectory_publisher = rospy.Publisher(
-        '/move_group/display_planned_path',
-        moveit_msgs.msg.DisplayTrajectory,
-        queue_size=20)
-
     # We can get the name of the reference frame for this robot:
     self.planning_frame = self.move_group_arm.get_planning_frame()
     # print("Planning frame: " + self.planning_frame)
 
-    # We can also print the name of the end-effector link for this group:
+    # The end-effector link for this group:
     self.eef_link = self.move_group_arm.get_end_effector_link()
     # print("End effector link: " + self.eef_link)
 
@@ -109,25 +94,8 @@ class MoveGroupInterface():
     self.group_names = self.robot.get_group_names()
     # print("Available Planning Groups:", self.robot.get_group_names())
 
-    # Sometimes for debugging it is useful to print the entire state of the
-    # robot:
-    # print("Printing robot state")
-    # print(self.robot.get_current_state())
-    # print("")
-
-    # Misc variables
-    self.box_name = ''
-
-    self.box_pose = geometry_msgs.msg.PoseStamped()
-    self.box_pose.header.frame_id = "panda_link0"
-    self.box_pose.pose.orientation.w = 1.0
-
+    # Set the max velocity factor to 1 by default
     self.move_group_arm.set_max_velocity_scaling_factor(1)
-
-    # self.scene.add_mesh(
-    # "table", [0, 0, 0],
-    # "/home/joseph/ws_moveit/src/jgioia_panda_projects/models/table.STL",
-    # size=(0.001, 0.001, 0.001))
 
   def go_to_pose(self, x=None, y=None, z=None, roll=None, pitch=None, yaw=None):
     """Makes end effector go to the pose position specified by the parameters
@@ -146,8 +114,6 @@ class MoveGroupInterface():
     # Set the pose goal
     pose_goal = geometry_msgs.msg.Pose()
 
-    print(yaw)
-
     # Deal with the case where an orientation is not set
     if roll == None:
       roll = 0
@@ -155,7 +121,6 @@ class MoveGroupInterface():
       pitch = np.pi
     if yaw == None:
       yaw = 0.25 * np.pi
-    print(yaw)
     pose_goal.orientation = rpy_to_quaternion(roll, pitch, yaw)
 
     # Deal with the case where a position is not set
@@ -245,78 +210,6 @@ class MoveGroupInterface():
     return all_close(joint_goal,
                      self.move_group_hand.get_current_joint_values(), 0.01)
 
-  def wait_for_state_update(self,
-                            box_is_known=False,
-                            box_is_attached=False,
-                            timeout=4):
-    """Waits until we reach the expected state.
-
-    Args:
-      box_is_known (bool): Optional; Expected value for whether the box is in the scene. 
-        Defaults to False.
-      box_is_attached (bool): Optional; Expected value for whether the box is attached 
-        to the robot. Defaults to False.
-      timeout (int): Optional; Number of seconds to wait as a maximum for the expected
-        state to be reached. Defaults to 4.
-
-    Returns:
-      A bool that represents whether the expected state was reached before the timeout.
-    """
-    start = rospy.get_time()
-    seconds = rospy.get_time()
-
-    while (seconds - start < timeout) and not rospy.is_shutdown():
-      # Test if the box is in attached objects
-      attached_objects = self.scene.get_attached_objects([self.box_name])
-      is_attached = len(attached_objects.keys()) > 0
-
-      # Test if the box is in the scene.
-      # Note that attaching the box will remove it from known_objects
-      is_known = self.box_name in self.scene.get_known_object_names()
-
-      # Test if we are in the expected state
-      if (box_is_attached == is_attached) and (box_is_known == is_known):
-        return True
-
-      # Sleep so that we give other threads time on the processor
-      rospy.sleep(0.1)
-      seconds = rospy.get_time()
-
-    # If we exited the while loop without returning then we timed out
-    return False
-
-  def add_box(self, x, y, z, timeout=4):
-    """Adds a box at the location of the panda's left box stores it in an object variable. (DEPRECATED)
-
-    Args:
-      timeout (int): Optional; Number of seconds to wait as a maximum for the box to
-        be added. Defaults to 4.
-
-    Returns:
-      A bool that represents whether the box was successfully added
-    """
-    self.box_pose.pose.position.x = x
-    self.box_pose.pose.position.y = y
-    self.box_pose.pose.position.z = z
-    self.box_name = "box"
-
-    self.scene.add_box(self.box_name, self.box_pose, size=(0.03, 0.03, 0.03))
-    return self.wait_for_state_update(box_is_known=True, timeout=timeout)
-
-  def grab_box(self):
-    """Grabs the box assuming it has been added.
-    
-    Only works for a box of size (0.03, 0.03, 0.03) in the default orientation.
-    Assumes box_pose is a pose_stamped. TODO: Not working
-    """
-    self.open_gripper()
-    print("Pose goal: ", self.box_pose.position.x, self.box_pose.position.y,
-          self.box_pose.position.z + 0.1)
-    self.go_to_pose(self.box_pose.position.x, self.box_pose.position.y,
-                    self.box_pose.position.z + 0.1)
-    self.go_to_hand_joint_goal([0.0, 0.0])
-    self.attach_box()
-
   def grab_box1(self, box):
     """Grabs the box1 MoveItObject provided
     
@@ -369,6 +262,10 @@ class MoveGroupInterface():
 
   def rotate_gripper(self, angle):
     """Rotates the gripper to the specified angle from the x axis.
+    
+    NOTE: This is currently relative the the grippers original pose,
+    so you may get unexpected results when you have changed the 
+    orientation of the robot.
 
     Args:
         angle (float): The angle from the x-axis.
@@ -379,65 +276,6 @@ class MoveGroupInterface():
 
     joint_goal = zero_joint + (angle / np.pi) * (zero_joint - neg_pi_joint)
     self.go_to_joint_goal([None, None, None, None, None, None, joint_goal])
-
-  def attach_box(self, timeout=4):
-    """Attaches the box to the Panda wrist.
-
-    Args:
-      timeout (int): Optional; Number of seconds to wait as a maximum for the box to
-        be attached. Defaults to 4.
-
-    Returns:
-      A bool that represents whether the box was successfully attached
-    """
-    # Attaches the box to the hand group of the robot
-    grasping_group = 'hand'
-    touch_links = self.robot.get_link_names(group=grasping_group)
-    self.scene.attach_box("panda_link8", self.box_name)
-
-    # Checks whether the box was successfully added
-    return self.wait_for_state_update(box_is_attached=True,
-                                      box_is_known=False,
-                                      timeout=timeout)
-
-  def detach_box(self, timeout=4):
-    """Detaches the box from the Panda wrist. (DEPRECATED)
-
-    Args:
-      timeout (int): Optional; Number of seconds to wait as a maximum for the box to
-        be detached. Defaults to 4.
-
-    Returns:
-        A bool that represents whether the box was successfully detached
-    """
-    # Detach the box
-    self.scene.remove_attached_object(self.eef_link, name=self.box_name)
-
-    # Checks whether the box was successfully detached
-    return self.wait_for_state_update(box_is_known=True,
-                                      box_is_attached=False,
-                                      timeout=timeout)
-
-  def remove_box(self, timeout=4):
-    """Remove the box from the planning scene. The box must be detached to do this. (DEPRECATED)
-
-    Args:
-      timeout (int): Optional; Number of seconds to wait as a maximum for the box to
-        be removed. Defaults to 4.
-
-    Returns:
-        A bool that represents whether the box was successfully removed
-    """
-    # Make sure box is detached
-    self.detach_box()
-
-    # Remvoe the box from the world
-    self.scene.remove_world_object(self.box_name)
-
-    # We wait for the planning scene to update.
-    return self.wait_for_state_update(box_is_attached=False,
-                                      box_is_known=False,
-                                      timeout=timeout)
 
   def open_gripper(self):
     """Opens the gripper
@@ -456,7 +294,5 @@ class MoveGroupInterface():
     return self.go_to_hand_joint_goal([0, 0])
 
   def test(self):
-    """A method to be used for feature testing. Currently testing gazebo."""
-    # print(self.move_group_arm.get_current_pose().pose.orientation)
-    print(self.move_group_arm.get_current_joint_values())
+    """A method used for feature testing. Currently not testing anything."""
     pass

@@ -59,17 +59,18 @@ class ArObjectImporter():
       self.moveit_object.delete()
       self.is_visible = False
 
-  def scan(self):
+  def scan(self, scan_poses):
     """ Moves the robot to different positions to look for an ar tag.
     
-    Stops scanning when it has completed a cycle or it detects the tag for
+    Stops scanning when it has look in all poses or it detects the tag for
     at least 80% of the time at one of its stops.
+    
+    scan_poses(List(float)): List of triples of positions to look at
     
     Returns: True if it detects a tag and False if not
     """
-    poses = [[0.4, -0.5, 0.3], [0, -0.5, 0.3], [-0.4, -0.5, 0.3]]
     threshold = 0.8
-    for pose in poses:
+    for pose in scan_poses:
       self.move_group_interface.go_to_pose(x=pose[0], y=pose[1], z=pose[2])
       self.ticks = 0
       self.ticks_seen = 0

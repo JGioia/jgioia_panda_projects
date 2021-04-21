@@ -10,7 +10,7 @@ import rospy
 
 
 class MoveItObject:
-  """Publishes an object to moveit"""
+  """An object that has a pose, can be grabbed, and can be added to the planning scene (for collision avoidance)."""
 
   def __init__(self,
                type,

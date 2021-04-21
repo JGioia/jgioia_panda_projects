@@ -1,5 +1,6 @@
 <!-- Fork of realsense2_camera/launch/rs_d435_camera_with_model.launch that 
   does not start a robot_state publisher -->
+<!-- Helper launch file that starts the camera without the model.-->
 <launch>
   <arg name="serial_no"           default=""/>
   <arg name="json_file_path"      default=""/>

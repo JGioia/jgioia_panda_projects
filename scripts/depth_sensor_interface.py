@@ -1,4 +1,4 @@
-"""Module that contains the DepthSensorInterface class"""
+"""Module that contains the DepthSensorInterface class. NOTE: This currently does nothing."""
 
 import rospy
 from sensor_msgs.msg import Image

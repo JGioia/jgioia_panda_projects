@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Executable module that parses operations and moves the Panda"""
+"""Executable module that parses operations and moves the Panda. NOTE: Protocol buffer format is outdated and will not work in the current version."""
 
 import move_group_interface
 import sys

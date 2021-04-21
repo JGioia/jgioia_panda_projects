@@ -1,3 +1,4 @@
+<!-- Helper launch files that does part of launching MoveIt. No reason to launch this from the command line.-->
 <launch>
 
   <!-- By default we do not overwrite the URDF. Change the following to true to change the default behavior -->
