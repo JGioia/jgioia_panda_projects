@@ -22,7 +22,7 @@ def main():
   depth_interface = DepthSensorInterface()
   link_interface = LinkPoseInterface()
 
-  time.sleep(1)
+  rospy.sleep(2)
 
   floor = MoveItObject(type="floor")
   time.sleep(10)

@@ -76,6 +76,9 @@ class MoveGroupInterface():
     # kinematic model and the robot's current joint states
     self.robot = moveit_commander.RobotCommander()
 
+    # This seems to be unused but removing it results in not being able to add a planning scene object in MoveItObject
+    self.scene = moveit_commander.PlanningSceneInterface()
+
     # Instantiate a `MoveGroupCommander`_ object.  This object is an interface
     # to a planning group (group of joints).
     # This interface can be used to plan and execute motions:

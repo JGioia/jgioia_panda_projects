@@ -44,6 +44,8 @@ class MoveItObject:
     self.pose.header.frame_id = world_frame
     self.pose.pose = initial_pose
 
+    self.grasp_pose = PoseStamped()
+
     self.tfBuffer = tf2_ros.Buffer()
     self.listener = tf2_ros.TransformListener(self.tfBuffer)
 
@@ -64,6 +66,7 @@ class MoveItObject:
     elif (self.type == "mesh"):
       self.__make_mesh()
     elif (self.type == "floor"):
+      print("tf")
       self.__make_floor()
     self.visibility = True
 

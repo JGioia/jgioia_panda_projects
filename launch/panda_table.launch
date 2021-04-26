@@ -1,4 +1,5 @@
 <!-- Launches the panda + table model. -->
+<!-- Fork of moveit_resources_panda_moveit_config/launch/panda.launch-->
 <launch>
 
   <arg name="camera" default="false" />
