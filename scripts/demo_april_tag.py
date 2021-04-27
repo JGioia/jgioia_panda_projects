@@ -24,7 +24,7 @@ def main():
   scan_poses = [[0.5, 0.4, 0.3], [0.5, 0.4, 0.3], [-0.5, 0.4, 0.3]]
   if (importer.scan(scan_poses)):
     print("grabbing")
-    robot_interface.grab_box1(box)
+    robot_interface.grab_object(box)
 
   importer.stop()
   box.delete()

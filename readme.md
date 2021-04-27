@@ -91,13 +91,20 @@ I encountered a significant amount of problems when creating this package. You m
 
 *Conda with ROS:* Please do not try to use conda with ROS. I tried to and it broke my ROS installation, so that rospy no longer worked. This was difficult to fix.
 
-*ROS/Python version support:* You may want to use Python 3 or a different version of ROS. However, there are many compatibility issues. For ROS Melodic, python 3 is not available, without significant difficulties. For later ROS versions, including ROS 2, python 3 is supported, however many necessary packages are not. It looks like most packages are being migrated and ROS 2 may be reasonable to switch to by the end of the year. 
+*ROS/Python version support:* You may want to use Python 3 or a different version of ROS. However, there are many compatibility issues. For ROS Melodic, python 3 is not available, without significant difficulties. For later ROS versions, including ROS 2, Python 3 is supported, however many necessary packages are not. It looks like most packages are being migrated and ROS 2 may be reasonable to switch to by the end of the year.
 
 *Pick and place in Gazebo:* There were several problems with pick and place in gazebo. The first is that the grippers would not work. To solve this, I had to remove the mimic tag from the srdf file of the robot, as Gazebo does not support mimic joints. Once the grippers work, there are also picking up an object in gazebo. Friction does not seem to work like it should and I have not been able to demonstrate that you can pick up an object with the grippers in Gazebo. I also have not found any other demo that can, and the simulation package I based my simulations on used a robot state publisher to effectively link a box to the gripper, mimicking picking it up.
 
 *Object tracking:* You might notice that my package’s object tracking is limited to april tags and does not utilize the depth sensor. Originally we wanted to use ros_object_analytics. However, after spending a significant amount of time trying to get the package to work we could not. It depends on deprecated packages that depend on other packages. Further, none of the package worked the first time I installed them. There is a new version of ros_object_analytics for ROS 2, but as mentioned earlier we cannot switch to ROS 2 yet. There seems to be a lack of good options for object tracking in ROS Melodic, but it is possible that we just missed a good one.
 
-*MoveItObject updating:* As mentioned before, MoveItObjects have to remove themselves from the planning scene and then re add themselves to change their pose. This can cause flickering of the objects when they are updating frequently (such as when you have multiple objects being tracked). 
+*MoveItObject updating:* As mentioned before, MoveItObjects have to remove themselves from the planning scene and then re add themselves to change their pose. This can cause flickering of the objects when they are updating frequently (such as when you have multiple objects being tracked).
+
+*MoveItObject make:* I had a lot of issues adding objects to a
+planning scene that seemed to be very inconsistent. It ended up
+resulting from the fact that the PlanningSceneInterface constructor
+is asynchronous. To fix this, you should add `synchronous=True` to
+the constructor of PlanningSceneInterface wherever you create an
+instance.
 
 ## Contact info
 

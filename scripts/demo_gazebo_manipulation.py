@@ -87,7 +87,7 @@ def main():
   robot_interface.open_gripper()
   robot_interface.go_to_pose(-0.4, 0.5, 0.2)
 
-  # robot_interface.grab_box1(purple_box1)
+  # robot_interface.grab_object(purple_box1)
   # robot_interface.slide_to(purple_box1.pose.pose.x,
   #                          purple_box1.pose.pose.y - 0.1)
   # robot_interface.slide_to(0.5, purple_box1.pose.pose.y)

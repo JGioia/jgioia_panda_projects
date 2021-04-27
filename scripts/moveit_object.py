@@ -17,11 +17,12 @@ class MoveItObject:
                mesh="",
                initial_pose=Pose(),
                world_frame="base_link",
-               name=""):
+               name="",
+               collision=True):
     """Initializes the object and publishes it to the topic
 
     Args:
-      type (str): Type of object. See below for supported types.
+      type (str): Type of object. See below for supported types. Feel free to add your own.
         "box1" - 0.03 x 0.03 x 0.03 box
         "wall" - 2 x 0.25 x 2 box
         "floor" - 3 x 3 x 0.1 box that defaults to be centered right below the robot
@@ -31,11 +32,13 @@ class MoveItObject:
         to the world frame
       world_frame (str): The name of the world frame
       name (str): The name of the object. A random number will be added to make it unique.
+      collision (bool): Determines whether the object will be added to the planning scene
     """
     self.type = type
     self.mesh = mesh
     self.world_frame = world_frame
-    self.scene = moveit_commander.PlanningSceneInterface()
+    self.collision = collision
+    self.scene = moveit_commander.PlanningSceneInterface(synchronous=True)
 
     # Make pose relative to world frame
     if (type == "floor" and initial_pose == Pose()):
@@ -44,7 +47,8 @@ class MoveItObject:
     self.pose.header.frame_id = world_frame
     self.pose.pose = initial_pose
 
-    self.grasp_pose = PoseStamped()
+    self.grasp_offset = Pose()
+    self.grasp_width = 0
 
     self.tfBuffer = tf2_ros.Buffer()
     self.listener = tf2_ros.TransformListener(self.tfBuffer)
@@ -66,29 +70,42 @@ class MoveItObject:
     elif (self.type == "mesh"):
       self.__make_mesh()
     elif (self.type == "floor"):
-      print("tf")
       self.__make_floor()
-    self.visibility = True
+    if (self.collision):
+      self.visibility = True
 
   def __make_box1(self):
-    """Makes a 0.03 x 0.03 x 0.03 box at the field pose
+    """Defines grasp position and adds a 0.03 x 0.03 x 0.03 box if collision is on.
     """
-    self.scene.add_box(self.name, self.pose, size=(0.03, 0.03, 0.03))
+    self.grasp_offset.position.z = 0.1
+    self.grasp_width = 0.0306
+    if (self.collision):
+      print("wtf")
+      self.scene.add_box(self.name, self.pose, size=(0.03, 0.03, 0.03))
 
   def __make_wall(self):
-    """Make a 2 x 0.25 x 2 box at the field pose
+    """Defines grasp position and adds a 2 x 0.25 x 2 box if collision is on
     """
-    self.scene.add_box(self.name, self.pose, size=(2, 0.25, 2))
+    self.grasp_offset = None
+    self.grasp_width = None
+    if (self.collision):
+      self.scene.add_box(self.name, self.pose, size=(2, 0.25, 2))
 
   def __make_floor(self):
-    """Makes the floor
+    """Defines grasp position and add a floor if collision is on
     """
-    self.scene.add_box(self.name, self.pose, size=(4, 4, 0.1))
+    self.grasp_offset.position.z = None
+    self.grasp_width = None
+    if (self.collision):
+      self.scene.add_box(self.name, self.pose, size=(4, 4, 0.1))
 
   def __make_mesh(self):
-    """Makes an object specified by the stl at the file of the name specified by the model field
+    """Adds an object specified by the stl at the file of the name specified by the model field
     """
-    self.scene.add_mesh(self.name, self.pose, self.mesh, size=(0.1, 0.1, 0.1))
+    self.grasp_offset.position.z = None
+    self.grasp_width = None
+    if (self.collision):
+      self.scene.add_mesh(self.name, self.pose, self.mesh, size=(0.1, 0.1, 0.1))
 
   def delete(self):
     """Removes the object from the planning scene.

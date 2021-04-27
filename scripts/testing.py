@@ -5,9 +5,10 @@ from move_group_interface import MoveGroupInterface
 from depth_sensor_interface import DepthSensorInterface
 from gazebo_object_importer import LinkPoseInterface
 from ar_object_importer import ArObjectImporter
-from moveit_commander import robot
+import moveit_commander
 from moveit_object import MoveItObject
 from geometry_msgs.msg import Pose
+from geometry_msgs.msg import PoseStamped
 
 import rospy
 import time
@@ -18,11 +19,31 @@ def main():
   """Runs testing code."""
   rospy.init_node("Testing")
 
-  robot_interface = MoveGroupInterface()
-  depth_interface = DepthSensorInterface()
-  link_interface = LinkPoseInterface()
+  # scene = moveit_commander.PlanningSceneInterface()
+  # robot_interface = MoveGroupInterface()
+  # depth_interface = DepthSensorInterface()
+  # link_interface = LinkPoseInterface()
 
-  rospy.sleep(2)
+  # time.sleep(2)
+  # box_pose = Pose()
+  # box_pose.position.x = 0.3
+  # box_pose.position.y = 0.4
+  # box_pose.position.z = 0.1
+  # box = MoveItObject("box1", initial_pose=box_pose)
+  # time.sleep(2)
+  # robot_interface.grab_object(box)
+  # box.delete()
+
+  # scene = moveit_commander.PlanningSceneInterface()
+
+  # rospy.sleep(2)
+
+  # scene2 = moveit_commander.PlanningSceneInterface(synchronous=True)
+  # pose = PoseStamped()
+  # pose.header.frame_id = "base_link"
+  # scene2.add_box("test", pose, size=(4, 4, 0.1))
+  # rospy.sleep(2)
+  # scene2.remove_world_object("test")
 
   floor = MoveItObject(type="floor")
   time.sleep(10)

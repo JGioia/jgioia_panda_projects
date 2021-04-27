@@ -100,7 +100,14 @@ class MoveGroupInterface():
     # Set the max velocity factor to 1 by default
     self.move_group_arm.set_max_velocity_scaling_factor(1)
 
-  def go_to_pose(self, x=None, y=None, z=None, roll=None, pitch=None, yaw=None):
+  def go_to_pose(self,
+                 x=None,
+                 y=None,
+                 z=None,
+                 roll=None,
+                 pitch=None,
+                 yaw=None,
+                 pose=None):
     """Makes end effector go to the pose position specified by the parameters
     
     Args:
@@ -110,6 +117,7 @@ class MoveGroupInterface():
       roll (float or None): The goal roll in radians. If None, then goal roll = 0
       pitch (float or None): The goal pitch in radians. If None, then goal pitch = pi
       yaw (float or None): The goal yaw in radians. If None, then goal yaw = pi / 4
+      pose (Pose): Overrides all other parameters if set.
       
     Returns:
       A bool that represents whether the expected state was reached before the timeout.
@@ -140,6 +148,10 @@ class MoveGroupInterface():
       pose_goal.position.z = current_pose.position.z
     else:
       pose_goal.position.z = z
+
+    # If pose is set, override all other parameters
+    if (pose != None):
+      pose_goal = pose
 
     # Now, we call the planner to compute the plan and execute it.
     self.move_group_arm.set_pose_target(pose_goal)
@@ -213,18 +225,26 @@ class MoveGroupInterface():
     return all_close(joint_goal,
                      self.move_group_hand.get_current_joint_values(), 0.01)
 
-  def grab_box1(self, box):
-    """Grabs the box1 MoveItObject provided
+  def grab_object(self, item):
+    """Grabs the MoveItObject provided
     
+    Uses the MoveItObject's grasp_offset and grasp_width to determine
+    how to grasp. Does not move if grasp_offset is None and does not
+    grip if grasp_width is None. Does not support non default orientations
+    currently. Pre-grasp pose is 0.1 above grasp pose with gripper open.
+
     Args:
-      box (MoveItObject): A "box1" type MoveItObject
+      item (MoveItObject): The object to grab.
     """
     self.open_gripper()
-    print("Pose goal: ", box.pose.pose.position.x, box.pose.pose.position.y,
-          box.pose.pose.position.z + 0.1)
-    self.go_to_pose(box.pose.pose.position.x, box.pose.pose.position.y,
-                    box.pose.pose.position.z + 0.1)
-    self.go_to_hand_joint_goal([0.0153, 0.0153])
+    if (item.grasp_offset != None):
+      x_pos = item.grasp_offset.position.x + item.pose.pose.position.x
+      y_pos = item.grasp_offset.position.y + item.pose.pose.position.y
+      z_pos = item.grasp_offset.position.z + item.pose.pose.position.z
+      self.go_to_pose(x=x_pos, y=y_pos, z=z_pos + 0.1)
+      self.go_to_pose(x=x_pos, y=y_pos, z=z_pos)
+    if (item.grasp_width != None):
+      self.go_to_hand_joint_goal([item.grasp_width / 2, item.grasp_width / 2])
 
   def slide_to(self, x, y, rotate=True):
     """Moves horizontally to the x,y position at the current z position. 
