@@ -17,11 +17,11 @@ import numpy as np
 
 def main():
   """Sorts the boxes by color"""
-  
-  # IMPORTANT: I hardcoded everything instead of using my prebuilt methods
+
+  # NOTE: I hardcoded everything instead of using my prebuilt methods
   # for grabbing objects, because I was trying to tweak all of the parameters
   # to get it to work consistently. This did not work :(
-  
+
   rospy.init_node("Gazebo_Manipulation_Demo")
 
   robot_interface = MoveGroupInterface()
