@@ -17,7 +17,7 @@ This ROS Melodic package provides interfaces and launch files to use the Frank E
 
 ### ROS packages from APT
 
-ros-melodic-ros-core (std_msgs), ros-melodic-moveit (moveit_core, moveit_commander), ros-melodic-franka-ros (franka_description), ros-melodic-ros-comm (rospy, topic_tools), ros-melodic-viz (rviz), ros-melodic-moveit-resources (moveit_resources, moveit_resources_panda_moveit_config), ros-melodic-robot (xacro, robot_state_publisher, joint_state_publisher), ros-melodic-libfranka, ros-melodic-gazebo-ros-pkgs (gazebo_ros, gazebo_msgs), ros-melodic-geometry2 (tf2_geometry_msgs, tf2_ros), ros-melodic-ros-control (controller_manager), ros-melodic-ar-track-alvar (ar_track_alvar), ros-melodic-ar-track-alvar-msgs (ar_tack_alvar_msgs), ros-melodic-common-msgs (sensor_msgs)
+ros-melodic-ros-core (std_msgs), ros-melodic-moveit (moveit_core, moveit_commander), ros-melodic-franka-ros (franka_description), ros-melodic-ros-comm (rospy, topic_tools), ros-melodic-viz (rviz), ros-melodic-moveit-resources (moveit_resources, moveit_resources_panda_moveit_config), ros-melodic-robot (xacro, robot_state_publisher, joint_state_publisher), ros-melodic-libfranka, ros-melodic-gazebo-ros-pkgs (gazebo_ros, gazebo_msgs), ros-melodic-geometry2 (tf2_geometry_msgs, tf2_ros), ros-melodic-ros-control (controller_manager), ros-melodic-ar-track-alvar (ar_track_alvar), ros-melodic-ar-track-alvar-msgs (ar_tack_alvar_msgs), ros-melodic-common-msgs (sensor_msgs). ros-melodic-realsense2-camera (realsense2_camera), ros-melodic-realsense2-description (realsense2_description)
 
 * You may have many of these packages if you install the full version of ros
 * Outside parentheses is the name to apt install
