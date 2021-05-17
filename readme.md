@@ -33,7 +33,7 @@ ros-melodic-ros-core (std_msgs), ros-melodic-moveit (moveit_core, moveit_command
 
 ### Installing my package in your catkin workspace
 
-* Navigate to the source directory of your catkin workspace (likely ~/catkin_ws/src) (you will need to create a catkin workspace if you don’t have one). 
+* Navigate to the source directory of your catkin workspace (likely ~/catkin_ws/src) (you will need to create a catkin workspace if you don’t have one).
 * git clone this package at that location.
 * Go back to the main directory of the catkin workspace (ex. ~/catkin_ws).
 * Use catkin_make or catkin build to build the package depending on what you have used before (it does not matter for this package, as long as it is consistent with what you’ve used).
@@ -71,9 +71,23 @@ My package also provides a protobuf message protocol for the moveGroupInterface.
 
 There are three ways to run the robot. You can use RViz, which is a program that does not attempt to simulate physics, but has many visualization features. You can Gazebo, which attempts to simulate physics. Or you can run the program on the actual robot. RViz can be used in addition to the last two. Since I have not been able to test on the real robot, I will not cover how to use the real robot.
 
-RViz is, as the name implies, a great robot visualizer. It allows us to do things like view the robot, view the image from a camera, view the depth cloud from a depth camera, and view objects known to the motion planning algorithm. We have several launch files that are exclusively for RViz. `panda_table.launch` launches the robot attached to the table. As mentioned previously, no physics are simulated for this. However you can still send commands to the robot launched here just like the simulated robot. `panda_table_camera.launch` does the same thing as panda_table.launch except it attaches the intel d435i camera and shows the depth cloud detected by the camera. The camera must be plugged in for this launch file to work properly. `demo_april_tag.launch` launches RViz in the same way as panda_table_camera.launch, but it has additional features we will discuss in the object detection section.
+RViz is, as the name implies, a great robot visualizer. It allows us to do things like view the robot, view the image from a camera, view the depth cloud from a depth camera, and view objects known to the motion planning algorithm. We have several launch files that are exclusively for RViz. `panda_table.launch` launches the robot attached to the table. As mentioned previously, no physics are simulated for this. However you can still send commands to the robot launched here just like the simulated robot. `panda_table_camera.launch` does the same thing as panda_table.launch except it attaches the intel d435i camera and shows the depth cloud detected by the camera. The camera must be plugged in for this launch file to work properly. `demo_april_tag.launch` launches RViz in the same way as panda_table_camera.launch, but it has additional features we will discuss in the object detection section. I provide a demo to make sure that simple movement is working with your installation. To run it, enter the following commands on separate consoles:
 
-Gazebo is usually good at physics simulation, however it can be inconsistent and can cause unexpected behavior. When we launch a gazebo simulation, we also launch RViz so that we have additional visualization options. One thing to note is that just because an object is in Gazebo does not mean that it is known to the planning algorithm. Only the objects shown in the planning scene in RViz are known. We have 2 launch files for gazebo. `simulation.launch` is the basic simulation of the panda. It does not contain any additional objects. `demo_gazebo_manipulation.launch` is like simulation.launch with additional boxes to showcase object manipulation. You can run `demo_gazebo_manipulation.py` after you’ve launched `demo_gazebo_manipulation.launch` to watch the demo. Here’s a video of the demo:
+```Bash
+roslaunch jgioia_panda_projects panda_table.launch
+rosrun jgioia_panda_projects demo_movement.py
+```
+
+Here is a video of the demo:
+
+Gazebo sometimes works incredibly well, but it can be inconsistent and can cause unexpected behavior. When we launch a gazebo simulation, we also launch RViz so that we have additional visualization options. One thing to note is that just because an object is in Gazebo does not mean that it is known to the planning algorithm. Only the objects shown in the planning scene in RViz are known. We have 2 launch files for gazebo. `simulation.launch` is the basic simulation of the panda. It does not contain any additional objects. `demo_gazebo_manipulation.launch` is like `simulation.launch` with additional boxes to showcase object manipulation. If you run the demo, you'll notice that in long stretches of movement the boxes come out of the gripper. I tried altering the parameters to make the behavior better, but it was failing with different ways with the same input. This made me decide that, without a different method of grabbing the box or adding friction to the gripper in Gazebo, continuing to mess with the parameters was a fruitless endeavor. I'm still including the demo because it showcases the possibilities and limitations with Gazebo. To run the demo enter the following commands on separate consoles:
+
+```Bash
+roslaunch jgioia_panda_projects demo_gazebo_manipulation.launch
+rosrun jgioia_panda_projects demo_gazebo_manipulation.py
+```
+
+Here’s a video of the demo:
 
 ## Object detection/avoidance
 
@@ -81,7 +95,14 @@ For my package’s purposes, there are 2 reasons we would want to detect an obje
 
 The `GazeboObjectImporter` tracks the position of a link in Gazebo and updates the position of the `MoveItObject` provided. It takes, in its constructor, the `MoveItObject` to update and the link name. The `ArObjectImporter` does a similar thing. However, instead of tracking a link in gazebo, it uses the output of the ar_track_alvar package which tracks april tags using a camera. The `ArObjectImporter` is set up to translate the position published in the camera’s frame to the position in the robot’s frame. Both of these add the object to the planning scene whenever they receive an updated pose. However, you turn update off and on with the provided methods.
 
-I will now briefly cover the april tag demo. demo_april_tag takes input from a camera to search for objects that have april tags on them and then attempts to grab them. To run this, connect the D435i camera, launch `demo_april_tag.launch`, and finally run `demo_april_tag.py`. Here’s a video of it working (Note that since we haven’t been able to test on the robot, I am moving the camera with my arm to simulate the robot moving):
+I will now briefly cover the april tag demo. demo_april_tag takes input from a camera to search for objects that have april tags on them and then attempts to grab them. Currently the demo goes to three locations and tries to grab the object (which is assumed to be a 0.03m in length cube) if it detects the object for 80% of the time at one of the locations. The locations and size of the box can be edited in the code. To run this, connect the D435i camera and enter the following commands in separate consoles:
+
+```Bash
+roslaunch jgioia_panda_projects demo_april_tag.launch
+rosrun jgioia_panda_projects demo_april_tag.py
+ ```
+
+Unfortunately, I forgot to take a video of it working before I left campus and returned the camera.
 
 ## Difficulties encountered
 
@@ -91,20 +112,19 @@ I encountered a significant amount of problems when creating this package. You m
 
 *Conda with ROS:* Please do not try to use conda with ROS. I tried to and it broke my ROS installation, so that rospy no longer worked. This was difficult to fix.
 
-*ROS/Python version support:* You may want to use Python 3 or a different version of ROS. However, there are many compatibility issues. For ROS Melodic, python 3 is not available, without significant difficulties. For later ROS versions, including ROS 2, Python 3 is supported, however many necessary packages are not. It looks like most packages are being migrated and ROS 2 may be reasonable to switch to by the end of the year.
+*ROS/Python version support:* You may want to use Python 3 or a different version of ROS. However, there are many compatibility issues. For ROS Melodic, Python 3 is not available, without significant difficulties. For later ROS versions, including ROS 2, Python 3 is supported, however many necessary packages are not. It looks like most packages are being migrated and ROS 2 may be reasonable to switch to by the end of the year.
 
-*Pick and place in Gazebo:* There were several problems with pick and place in gazebo. The first is that the grippers would not work. To solve this, I had to remove the mimic tag from the srdf file of the robot, as Gazebo does not support mimic joints. Once the grippers work, there are also picking up an object in gazebo. Friction does not seem to work like it should and I have not been able to demonstrate that you can pick up an object with the grippers in Gazebo. I also have not found any other demo that can, and the simulation package I based my simulations on used a robot state publisher to effectively link a box to the gripper, mimicking picking it up.
+*Pick and place in Gazebo:* There were several problems with pick and place in gazebo. The first is that the grippers would not work. To solve this, I had to remove the mimic tag from the srdf file of the robot, as Gazebo does not support mimic joints. Once the grippers work, there are also picking up an object in gazebo. Friction does not seem to work like it should when altering the friction parameters in the urdf files and I have not been able to demonstrate that you can pick up an object with the grippers in Gazebo. I also have not found any other demo that can, and the simulation package I based my simulations on used a robot state publisher to effectively link a box to the gripper, mimicking picking it up.
 
 *Object tracking:* You might notice that my package’s object tracking is limited to april tags and does not utilize the depth sensor. Originally we wanted to use ros_object_analytics. However, after spending a significant amount of time trying to get the package to work we could not. It depends on deprecated packages that depend on other packages. Further, none of the package worked the first time I installed them. There is a new version of ros_object_analytics for ROS 2, but as mentioned earlier we cannot switch to ROS 2 yet. There seems to be a lack of good options for object tracking in ROS Melodic, but it is possible that we just missed a good one.
 
 *MoveItObject updating:* As mentioned before, MoveItObjects have to remove themselves from the planning scene and then re add themselves to change their pose. This can cause flickering of the objects when they are updating frequently (such as when you have multiple objects being tracked).
 
-*MoveItObject make:* I had a lot of issues adding objects to a
-planning scene that seemed to be very inconsistent. It ended up
-resulting from the fact that the PlanningSceneInterface constructor
-is asynchronous. To fix this, you should add `synchronous=True` to
-the constructor of PlanningSceneInterface wherever you create an
-instance.
+*MoveItObject make:* I had a lot of issues adding objects to a planning scene that seemed to be very inconsistent. It ended up resulting from the fact that the PlanningSceneInterface constructor is asynchronous. To fix this, you should add `synchronous=True` to the constructor of PlanningSceneInterface wherever you create an instance.
+
+*Real-time kernel:* We had many issues installing the real-time kernel. They all seem to come down to trying to compile to a debian package. Using a different tutorial that does not compile to a debian package worked. Here is one <https://stackoverflow.com/questions/51669724/install-rt-linux-patch-for-ubuntu>.
+
+*Incorrect model displaying:* When trying my package out on one of the lab computers I noticed that the incorrect model was being displayed. Editing the model that it should be using changed nothing about what was being displayed, except when it was deleted entirely. I did not have enough time to isolate the issue or determine if the issue stopped the simulations from working.
 
 ## Contact info
 

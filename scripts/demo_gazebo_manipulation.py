@@ -17,6 +17,11 @@ import numpy as np
 
 def main():
   """Sorts the boxes by color"""
+  
+  # IMPORTANT: I hardcoded everything instead of using my prebuilt methods
+  # for grabbing objects, because I was trying to tweak all of the parameters
+  # to get it to work consistently. This did not work :(
+  
   rospy.init_node("Gazebo_Manipulation_Demo")
 
   robot_interface = MoveGroupInterface()
@@ -24,26 +29,6 @@ def main():
   time.sleep(1)
 
   floor = MoveItObject(type="floor")
-
-  # purple_box1 = MoveItObject("box1")
-  # purple_box2 = MoveItObject("box1")
-  # yellow_box1 = MoveItObject("box1")
-  # yellow_box2 = MoveItObject("box1")
-  # purple_box1_tracker = GazeboObjectImporter(purple_box1,
-  #                                            "box_purple1::object_link")
-  # purple_box2_tracker = GazeboObjectImporter(purple_box2,
-  #                                            "box_purple2::object_link")
-  # yellow_box1_tracker = GazeboObjectImporter(yellow_box1,
-  #                                            "box_yellow1::object_link")
-  # yellow_box2_tracker = GazeboObjectImporter(yellow_box2,
-  #                                            "box_yellow2::object_link")
-
-  # robot_interface.rotate_gripper(0)
-
-  # time.sleep(4)
-  # robot_interface.rotate_gripper(np.pi / 2)
-  # time.sleep(4)
-  # robot_interface.rotate_gripper(np.pi - 0.1)
 
   robot_interface.open_gripper()
 
@@ -55,8 +40,6 @@ def main():
   robot_interface.slide_to(0.5, 0.5)
   robot_interface.open_gripper()
   robot_interface.go_to_pose(0.5, 0.5, 0.2)
-
-  # Turn on collision between open and next close
 
   # Purple box 2
   robot_interface.go_to_pose(-0.1, 0.601, 0.2)

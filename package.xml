@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>jgioia_panda_projects</name>
-  <version>0.1.0</version>
+  <version>0.0.0</version>
   <description>My beginner level projects for the Panda robot</description>
   <maintainer email="jeg4@rice.edu">Joseph Gioia</maintainer>
   <license>BSD</license>

@@ -40,9 +40,13 @@ class MoveItObject:
     self.collision = collision
     self.scene = moveit_commander.PlanningSceneInterface(synchronous=True)
 
-    # Make pose relative to world frame
+    # Default pose is different for some types
     if (type == "floor" and initial_pose == Pose()):
-      initial_pose.position.z -= 0.051
+      initial_pose.position.z = -0.051
+    elif (type == "wall" and initial_pose == Pose()):
+      initial_pose.position.x = 1.3
+
+    # Make pose relative to world frame
     self.pose = PoseStamped()
     self.pose.header.frame_id = world_frame
     self.pose.pose = initial_pose
@@ -54,7 +58,7 @@ class MoveItObject:
     self.listener = tf2_ros.TransformListener(self.tfBuffer)
 
     # Generate a unique name
-    # TODO: Should use static count to make name always unique
+    # TODO: Maybe use static count to make name always unique
     self.name = name + str(random.randint(0, 9999))
 
     self.visibility = False
@@ -80,7 +84,6 @@ class MoveItObject:
     self.grasp_offset.position.z = 0.1
     self.grasp_width = 0.0306
     if (self.collision):
-      print("wtf")
       self.scene.add_box(self.name, self.pose, size=(0.03, 0.03, 0.03))
 
   def __make_wall(self):
@@ -118,9 +121,8 @@ class MoveItObject:
     """Changes the pose of the object
 
     Args:
-        pose ([type]): [description]
+      pose (geometry_msgs.msg.Pose): The new pose for the object
     """
-    # TODO: Want a better way to do this
     self.pose.pose = pose
     self.delete()
     self.make()
@@ -129,7 +131,7 @@ class MoveItObject:
     """Changes the pose of the object
 
     Args:
-        pose ([type]): [description]
+      pose (geometry_msgs.msg.PoseStamped): The new pose in the given reference frame
     """
     transform = self.tfBuffer.lookup_transform(self.world_frame,
                                                pose.header.frame_id,

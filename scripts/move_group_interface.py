@@ -172,7 +172,7 @@ class MoveGroupInterface():
     """Moves the joints to the positions specified
 
     Args:
-      joint_goal (list[float or None]): List of joint positions to go to. If a joint position is
+      joint_goal (list[float or None]): List of 2 joint positions to go to. If a joint position is
         None then the goal for that joint is the current position.
 
     Returns:
@@ -199,7 +199,7 @@ class MoveGroupInterface():
     """Moves the joints in the hand move group to the positions specified
 
     Args:
-      joint_goal (list[float or None]): List of joint positions to go to. If a joint position is
+      joint_goal (list[float or None]): List of 7 joint positions to go to. If a joint position is
         None then the goal for that joint is the current position.
 
     Returns:
@@ -263,7 +263,7 @@ class MoveGroupInterface():
       self.move_group_arm.set_max_velocity_scaling_factor(0.03)
       goal = geometry_msgs.msg.Pose()
       goal.position = current_pose.position
-      goal.orientation = rpy_to_quaternion(0, np.pi, y_angle - np.pi / 4)
+      goal.orientation = rpy_to_quaternion(0, np.pi, y_angle + np.pi / 4)
       path, fraction = self.move_group_arm.compute_cartesian_path([goal], 0.001,
                                                                   0.0)
       self.move_group_arm.execute(path)
