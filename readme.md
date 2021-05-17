@@ -80,6 +80,8 @@ rosrun jgioia_panda_projects demo_movement.py
 
 Here is a video of the demo:
 
+https://user-images.githubusercontent.com/14362324/118419931-12f5c600-b683-11eb-88e4-c621fba0d078.mp4
+
 Gazebo sometimes works incredibly well, but it can be inconsistent and can cause unexpected behavior. When we launch a gazebo simulation, we also launch RViz so that we have additional visualization options. One thing to note is that just because an object is in Gazebo does not mean that it is known to the planning algorithm. Only the objects shown in the planning scene in RViz are known. We have 2 launch files for gazebo. `simulation.launch` is the basic simulation of the panda. It does not contain any additional objects. `demo_gazebo_manipulation.launch` is like `simulation.launch` with additional boxes to showcase object manipulation. If you run the demo, you'll notice that in long stretches of movement the boxes come out of the gripper. I tried altering the parameters to make the behavior better, but it was failing with different ways with the same input. This made me decide that, without a different method of grabbing the box or adding friction to the gripper in Gazebo, continuing to mess with the parameters was a fruitless endeavor. I'm still including the demo because it showcases the possibilities and limitations with Gazebo. To run the demo enter the following commands on separate consoles:
 
 ```Bash
@@ -88,6 +90,8 @@ rosrun jgioia_panda_projects demo_gazebo_manipulation.py
 ```
 
 Here’s a video of the demo:
+
+https://user-images.githubusercontent.com/14362324/118419958-20ab4b80-b683-11eb-94bd-5421a67e4263.mp4
 
 ## Object detection/avoidance
 
@@ -102,7 +106,7 @@ roslaunch jgioia_panda_projects demo_april_tag.launch
 rosrun jgioia_panda_projects demo_april_tag.py
  ```
 
-Unfortunately, I forgot to take a video of it working before I left campus and returned the camera.
+Unfortunately, I forgot to take a video of it before I left campus and returned the camera.
 
 ## Difficulties encountered
 
