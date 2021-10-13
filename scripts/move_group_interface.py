@@ -6,6 +6,7 @@ import copy
 import moveit_commander
 import geometry_msgs.msg
 from moveit_commander.conversions import pose_to_list
+import traceback
 
 
 def all_close(goal, actual, tolerance):
@@ -95,7 +96,8 @@ class MoveGroupInterface():
     # print("Available Planning Groups:", self.robot.get_group_names())
 
     # Set the max velocity factor to 1 by default
-    self.move_group_arm.set_max_velocity_scaling_factor(1)
+    self.move_group_arm.set_max_velocity_scaling_factor(0.1)
+    self.move_group_arm.set_max_acceleration_scaling_factor(0.4)
 
   def go_to_pose(self,
                  x=None,
@@ -167,6 +169,11 @@ class MoveGroupInterface():
     # Returns if the position we went to is within tolerances of the position we wanted
     return all_close(pose_goal,
                      self.move_group_arm.get_current_pose().pose, 0.01)
+
+  def stop(self):
+    """Stops the robot and cancels ongoing actions"""
+    self.move_group_arm.stop()
+    self.move_group_hand.stop()
 
   def go_to_joint_goal(self, joint_goal):
     """Moves the joints to the positions specified
@@ -279,6 +286,65 @@ class MoveGroupInterface():
     path, fraction = self.move_group_arm.compute_cartesian_path([goal], 0.001,
                                                                 0.0)
     self.move_group_arm.execute(path)
+
+  def move_delta(self, move_x, move_y, move_z, delta=0.1):
+    """Moves in a straight line to point delta away in each of the specified axis
+
+    Args:
+      x (int): 1 if move in +x, -1 if move in -x, 0 if don't move in x-axis
+      y (int): 1 if move in +y, -1 if move in -y, 0 if don't move in y-axis
+      z (int): 1 if move in +z, -1 if move in -z, 0 if don't move in z-axis
+      delta (float): amount to move by in each axis (must be <= 0.2)
+
+    Returns boolean of whether operation completed sucessfully
+    """
+    goal = self.move_group_arm.get_current_pose().pose
+    
+    # Check validity of delta
+    if (delta < 0 or delta > 0.2):
+      print("delta must be between 0 and 0.2")
+      print("delta recieved: ", str(delta))
+      traceback.print_stack()
+      return False
+
+    # Check validity of axis and set goal
+    if (move_x == 1):
+      goal.position.x += delta
+    elif (move_x == -1):
+      goal.position.x -= delta
+    elif (move_x != 0):
+      print("move_x must be 0, 1, or -1")
+      print("move_x recieved: ", str(move_x))
+      traceback.print_stack()
+      return False
+
+    if (move_y == 1):
+      goal.position.y += delta
+    elif (move_y == -1):
+      goal.position.y -= delta
+    elif (move_y != 0):
+      print("move_y must be 0, 1, or -1")
+      print("move_y recieved: ", str(move_y))
+      traceback.print_stack()
+      return False
+
+    if (move_z == 1):
+      goal.position.z += delta
+    elif (move_z == -1):
+      goal.position.z -= delta
+    elif (move_z != 0):
+      print("move_z must be 0, 1, or -1")
+      print("move_z recieved: ", str(move_z))
+      traceback.print_stack()
+      return False
+
+    # Move to goal
+    path, fraction = self.move_group_arm.compute_cartesian_path([goal], 0.001,
+                                                                0.0)
+    self.move_group_arm.execute(path)
+
+    # Return whether at goal
+    return all_close(goal, self.move_group_arm.get_current_pose().pose, 0.01)
 
   def rotate_gripper(self, angle):
     """Rotates the gripper to the specified angle from the x axis.

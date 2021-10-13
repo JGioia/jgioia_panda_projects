@@ -1,6 +1,7 @@
 """Module that contains a MoveItObject"""
 
 import moveit_commander
+from move_group_interface import MoveGroupInterface
 from geometry_msgs.msg import Pose
 from geometry_msgs.msg import PoseStamped
 import tf2_ros
@@ -16,7 +17,7 @@ class MoveItObject:
                type,
                mesh="",
                initial_pose=Pose(),
-               world_frame="base_link",
+               world_frame="panda_link0",
                name="",
                collision=True):
     """Initializes the object and publishes it to the topic
@@ -38,11 +39,12 @@ class MoveItObject:
     self.mesh = mesh
     self.world_frame = world_frame
     self.collision = collision
+    self.move_group_interface = MoveGroupInterface()
     self.scene = moveit_commander.PlanningSceneInterface(synchronous=True)
 
     # Default pose is different for some types
     if (type == "floor" and initial_pose == Pose()):
-      initial_pose.position.z = -0.051
+      initial_pose.position.z = 0.1
     elif (type == "wall" and initial_pose == Pose()):
       initial_pose.position.x = 1.3
 
@@ -97,10 +99,19 @@ class MoveItObject:
   def __make_floor(self):
     """Defines grasp position and add a floor if collision is on
     """
+    # TODO: Make this behavior more standard
     self.grasp_offset.position.z = None
     self.grasp_width = None
     if (self.collision):
-      self.scene.add_box(self.name, self.pose, size=(4, 4, 0.1))
+      self.pose.pose.position.x = 0.6
+      self.scene.add_box(self.name, self.pose, size=(1, 2, 0.2))
+      self.pose.pose.position.x = -0.7
+      self.scene.add_box(self.name + "1", self.pose, size=(1, 2, 0.2))
+      self.pose.pose.position.x = 0
+      self.pose.pose.position.y = 0.6
+      self.scene.add_box(self.name + "2", self.pose, size=(1, 1, 0.2))
+      self.pose.pose.position.y = -0.6
+      self.scene.add_box(self.name + "3", self.pose, size=(1, 1, 0.2))
 
   def __make_mesh(self):
     """Adds an object specified by the stl at the file of the name specified by the model field
@@ -115,6 +126,10 @@ class MoveItObject:
     """
     if (self.visibility):
       self.scene.remove_world_object(self.name)
+      if (self.type == "floor"):
+        self.scene.remove_world_object(self.name + "1")
+        self.scene.remove_world_object(self.name + "2")
+        self.scene.remove_world_object(self.name + "3")
       self.visibility = False
 
   def set_pose(self, pose):
@@ -140,6 +155,23 @@ class MoveItObject:
     self.pose = tf2_geometry_msgs.do_transform_pose(pose, transform)
     self.delete()
     self.make()
+
+  def check_collision(self):
+    """ Checks whether this object is in the operating zone of the robot and stops the robot if so.
+
+    Should be called by a subscription to a channel that published object location. 
+    Should change method when expected behavior is better defined.
+
+    Returns:
+      A bool that represents whether a collision was detected
+    """
+    if (self.visibility and self.collision):
+      x = self.pose.pose.position.x
+      y = self.pose.pose.position.y
+      z = self.pose.pose.position.z
+      if (x >= -2 and x <= 2 and y >=-2 and y <= 2 and z <=-2 and z >= 2):
+        self.move_group_interface.stop()
+
 
   def wait_for_state_update(self,
                             box_is_known=True,

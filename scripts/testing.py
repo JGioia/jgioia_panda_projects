@@ -3,8 +3,8 @@
 
 from move_group_interface import MoveGroupInterface
 from depth_sensor_interface import DepthSensorInterface
-from gazebo_object_importer import LinkPoseInterface
-from ar_object_importer import ArObjectImporter
+# from gazebo_object_importer import LinkPoseInterface
+# from ar_object_importer import ArObjectImporter
 import moveit_commander
 from moveit_object import MoveItObject
 from geometry_msgs.msg import Pose
@@ -19,10 +19,22 @@ def main():
   """Runs testing code."""
   rospy.init_node("Testing")
 
-  # scene = moveit_commander.PlanningSceneInterface()
-  # robot_interface = MoveGroupInterface()
+  scene = moveit_commander.PlanningSceneInterface()
+  robot_interface = MoveGroupInterface()
   # depth_interface = DepthSensorInterface()
   # link_interface = LinkPoseInterface()
+
+  floor = MoveItObject(type="floor")
+  time.sleep(2)
+  test = input("Enter a number")
+  # robot_interface.close_gripper()
+  robot_interface.move_delta(-1, 0, 0)
+  test = input("Enter a number")
+  # robot_interface.open_gripper()
+  floor.delete()
+
+  # pose = Pose()
+  # scene.add_box("test", pose, size=(0.5, 0.5, 0.5))
 
   # time.sleep(2)
   # box_pose = Pose()
@@ -44,10 +56,6 @@ def main():
   # scene2.add_box("test", pose, size=(4, 4, 0.1))
   # rospy.sleep(2)
   # scene2.remove_world_object("test")
-
-  floor = MoveItObject(type="floor")
-  time.sleep(10)
-  floor.delete()
 
   # robot_interface.go_to_pose(yaw=0)
   # robot_interface.test()
