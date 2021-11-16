@@ -15,10 +15,10 @@
     <group name="panda_arm" />
     <group name="hand" />
   </group>
-  <group name="panda_arm_hand_table">
+  <!-- <group name="panda_arm_hand_table">
     <group name="panda_arm_hand"/>
     <group name="table"/>
-  </group>
+  </group> -->
   <group_state name="open" group="hand">
     <joint name="panda_finger_joint1" value="0.035" />
     <joint name="panda_finger_joint2" value="0.035" />

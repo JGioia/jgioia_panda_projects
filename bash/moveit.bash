@@ -1,4 +1,4 @@
 cd panda_ws/devel
 source setup.zsh
 cd ~
-roslaunch panda_moveit_config panda_moveit.launch
+roslaunch jgioia_panda_projects panda_moveit.launch

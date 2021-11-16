@@ -1,3 +1,4 @@
+#!/usr/bin/env/ python
 """Module that contains the MoveGroupInterface"""
 
 import numpy as np
@@ -7,6 +8,9 @@ import moveit_commander
 import geometry_msgs.msg
 from moveit_commander.conversions import pose_to_list
 import traceback
+from franka_gripper.msg import MoveGoal, MoveAction, StopAction, StopGoal
+import actionlib
+import time
 
 
 def all_close(goal, actual, tolerance):
@@ -63,6 +67,24 @@ def rpy_to_quaternion(roll, pitch, yaw):
 
   return orientation
 
+def confirm_message(message):
+  """Asks the user for confirmation about an action
+
+  Args:
+    message (str): Warning message that describes the action that is about to take place
+
+  Returns: True if the user confirms the action. False if the user denies. 
+    Does not return until user inputs a value
+  """
+  print(message)
+  try:
+    result = raw_input("Do you want to proceed? (y/n)")
+    if (result == "y" or result == "Y"):
+      return True
+  except:
+    return False
+  return False
+
 
 class MoveGroupInterface():
   """Provides useful methods for robot interaction that utilize MoveIt's MoveGroupCommander"""
@@ -98,6 +120,12 @@ class MoveGroupInterface():
     # Set the max velocity factor to 1 by default
     self.move_group_arm.set_max_velocity_scaling_factor(0.1)
     self.move_group_arm.set_max_acceleration_scaling_factor(0.4)
+
+    # Set the clients for the franka gripper actions
+    self.move_client = actionlib.SimpleActionClient('/franka_gripper/move', MoveAction)
+    self.move_client.wait_for_server()
+    self.stop_client = actionlib.SimpleActionClient('/franka_gripper/stop', StopAction)
+    self.stop_client.wait_for_server()
 
   def go_to_pose(self,
                  x=None,
@@ -153,6 +181,8 @@ class MoveGroupInterface():
       pose_goal = pose
 
     # Now, we call the planner to compute the plan and execute it.
+    if (not confirm_message("You are about to move the robot to the pose:\n" + str(pose_goal))):
+      return False
     self.move_group_arm.set_pose_target(pose_goal)
     self.move_group_arm.go(wait=True)
 
@@ -245,10 +275,19 @@ class MoveGroupInterface():
       x_pos = item.grasp_offset.position.x + item.pose.pose.position.x
       y_pos = item.grasp_offset.position.y + item.pose.pose.position.y
       z_pos = item.grasp_offset.position.z + item.pose.pose.position.z
-      self.go_to_pose(x=x_pos, y=y_pos, z=z_pos + 0.1)
-      self.go_to_pose(x=x_pos, y=y_pos, z=z_pos)
-    if (item.grasp_width != None):
-      self.go_to_hand_joint_goal([item.grasp_width / 2, item.grasp_width / 2])
+
+      print("Moving to pregrasp position 0.1 above grasp position")
+      if (not self.go_to_pose(x=x_pos, y=y_pos, z=z_pos + 0.1)):
+        print("Pregrasp move failed")
+        # TODO: This is returning false more than i would expect
+        # Once resolve add return False here
+      print("Moving to grasp position")
+      if (not self.go_to_pose(x=x_pos, y=y_pos, z=z_pos)):
+        print("Grasp move failed")
+    if (not confirm_message("You are about to start gripping at the current position")):
+      return False
+    self.start_gripping()
+    time.sleep(1)
 
   def slide_to(self, x, y, rotate=True):
     """Moves horizontally to the x,y position at the current z position. 
@@ -341,6 +380,8 @@ class MoveGroupInterface():
     # Move to goal
     path, fraction = self.move_group_arm.compute_cartesian_path([goal], 0.001,
                                                                 0.0)
+    if (not confirm_message("You are about to move the robot to the pose:\n" + str(goal))):
+      return False
     self.move_group_arm.execute(path)
 
     # Return whether at goal
@@ -364,7 +405,7 @@ class MoveGroupInterface():
     self.go_to_joint_goal([None, None, None, None, None, None, joint_goal])
 
   def open_gripper(self):
-    """Opens the gripper
+    """Opens the gripper. Returns after the action is complete.
 
     Returns:
       A bool that represents whether the gripper was fully opened
@@ -372,12 +413,27 @@ class MoveGroupInterface():
     return self.go_to_hand_joint_goal([0.035, 0.035])
 
   def close_gripper(self):
-    """Closes the gripper
+    """Closes the gripper. Returns after the action is complete.
 
     Returns:
       A bool that represents whether the gripper was fully closed
     """
     return self.go_to_hand_joint_goal([0, 0])
+
+  def start_gripping(self):
+    """Starts closing the gripper and does not stop when the function returns.
+
+    Stops when stop_gripping is called, another gripper action (like open or close) is initiated
+    or the gripper is completely closed.
+    """
+    goal = MoveGoal(width = 0, speed = 0.08)
+    self.move_client.send_goal(goal)
+
+  def stop_gripping(self):
+    """Stops closing the gripper.
+    """
+    goal = StopGoal()
+    self.stop_client.send_goal(goal)
 
   def test(self):
     """A method used for feature testing. Currently not testing anything."""

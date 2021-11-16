@@ -24,14 +24,30 @@ def main():
   # depth_interface = DepthSensorInterface()
   # link_interface = LinkPoseInterface()
 
+  # TEST: Just move
   floor = MoveItObject(type="floor")
-  time.sleep(2)
-  test = input("Enter a number")
-  # robot_interface.close_gripper()
-  robot_interface.move_delta(-1, 0, 0)
-  test = input("Enter a number")
+  robot_interface.move_delta(1, 0, 0)
+
+  # # TEST: Create box, grab, move, drop
+  # floor = MoveItObject(type="floor")
   # robot_interface.open_gripper()
-  floor.delete()
+  # box = MoveItObject(type="box1", collision=False)
+  # box.pose.pose.position.x = 0.5
+  # box.pose.pose.position.y = 0
+  # box.pose.pose.position.z = 0.3
+  # robot_interface.grab_object(box)
+  # robot_interface.move_delta(0,1,0)
+  # robot_interface.stop_gripping()
+  # floor.delete()
+
+  # # TEST: Lower, grip, raise, drop
+  # floor = MoveItObject(type="floor")
+  # robot_interface.open_gripper()
+  # robot_interface.move_delta(0, 0, -1)
+  # robot_interface.start_gripping()
+  # robot_interface.move_delta(0, 0, 1)
+  # robot_interface.stop_gripping()
+  # floor.delete()
 
   # pose = Pose()
   # scene.add_box("test", pose, size=(0.5, 0.5, 0.5))

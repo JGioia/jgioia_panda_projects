@@ -1,4 +1,4 @@
-<!-- Helper launch file that starts rviz with the appropriate configuration. No reason to run this from the command line.-->
+<!-- Launches rviz -->
 <!-- Fork of moveit_resources_panda_moveit_config/launch/moveit_rviz.launch-->
 <launch>
 

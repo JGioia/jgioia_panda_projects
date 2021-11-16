@@ -8,6 +8,7 @@ import tf2_ros
 import tf2_geometry_msgs
 import random
 import rospy
+import time
 
 
 class MoveItObject:
@@ -65,6 +66,7 @@ class MoveItObject:
 
     self.visibility = False
     self.make()
+    time.sleep(1)
 
   def make(self):
     """Makes the object using the object_type field to determine the type

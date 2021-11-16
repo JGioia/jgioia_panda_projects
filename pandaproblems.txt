@@ -1,0 +1,37 @@
+Error with reflex:
+    libfranka: Move command rejected: command not possible in the current mode!
+        This is outputed by franka control when moveit launches
+    rostopic pub -1 /franka_control/error_recovery/goal franka_msgs/ErrorRecoveryActionGoal "{}"
+        This command was able to recover from the error and allowed me to move the robot with moveit
+        However, this had to be run every time after franka control was started
+        This also stopped working after a reboot of the panda
+            When this stopped working, rostopic echo /franka_control/error_recovery/status outputed 
+                libfranka: Automatic Error Recovery command rejected: command not possible in the current mode!
+    rostopic echo /franka_state_controller/franka_states/current_errors
+        I tried to use this command to see what the error was
+        However this resulted in franka control outputting 
+            Client [/rostopic_18499_1636502800105] wants topic /franka_state_controller/franka_states to have 
+            datatype/md5sum [franka_msgs/FrankaState/ada2a2f352d5bb0df96bc0a5d3c9d6e1], but our version has 
+            [franka_msgs/FrankaState/0aaac7d75db94290acd763669ea762b8]. Dropping connection.
+    It seems like the controller still is detecting a reflex
+    I thought this could be caused by an incompatible franka_control/libfranka version, however we have the latest
+    rosrun libfranka communication_test 192.168.1.5
+        libfranka: Set Joint Impedance command rejected: command not possible in the current mode!
+    sudo ping 192.168.1.5 -i 0.001 -D -c 10000 -s 1200
+        --- 192.168.1.5 ping statistics ---
+        10000 packets transmitted, 10000 received, 0% packet loss, time 10081ms
+        rtt min/avg/max/mdev = 0.139/0.219/0.414/0.044 ms
+
+    11/12 - Resolved??
+        Started robot again
+        Put in blue mode prior to activating FCI
+        Launched franka_control, moveit, and rviz with no issues
+        Successfully moved robot with rviz
+        At completion of movement rviz gave this error
+            [ WARN] [1636756006.052605634]: Maybe failed to update robot state, time diff: 0.045s
+        Restarted franka_control and worked again
+        Restarted fci and worked again
+            Worked with test code too
+        Issue appears to happen when blue light is not on
+            This is weird because i tried this earlier
+            Maybe it retained an error from when it started and the blue light was off??
