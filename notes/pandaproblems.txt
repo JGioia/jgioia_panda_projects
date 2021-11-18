@@ -35,3 +35,7 @@ Error with reflex:
         Issue appears to happen when blue light is not on
             This is weird because i tried this earlier
             Maybe it retained an error from when it started and the blue light was off??
+
+    11/17
+        IP conflict with panda
+        requires restart before using

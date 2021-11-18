@@ -26,7 +26,14 @@ def main():
 
   # TEST: Just move
   floor = MoveItObject(type="floor")
-  robot_interface.move_delta(1, 0, 0)
+  # robot_interface.move_delta(1, 0, 0)
+  box = MoveItObject(type="wall")
+  box.pose.pose.position.x = 1.3
+  box.pose.pose.position.y = -0.11
+  box.make()
+  robot_interface.move_delta(0, -1, 0, delta=0.2)
+  floor.delete()
+  box.delete()
 
   # # TEST: Create box, grab, move, drop
   # floor = MoveItObject(type="floor")

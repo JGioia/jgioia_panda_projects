@@ -1,0 +1,13 @@
+accomplishments
+    fixed robot
+    pick and place
+    changed launch config
+    got camera working
+    ip conflict detected
+
+goals
+    create demo
+    pick object detected by camera
+    get mocap input
+
+next semester
