@@ -7,7 +7,14 @@ accomplishments
 
 goals
     create demo
+    test in sim (see what happened)
+    create documentation
+
     pick object detected by camera
     get mocap input
 
+
 next semester
+    intermittent work over break
+    starting first day of class
+    no major preference between projects
